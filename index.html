@@ -21,9 +21,35 @@ font-family:'Prompt',sans-serif;
 
 body{
 
-background:#f5eee6;
+background:#f4eee8;
 color:#3e2f23;
+overflow-x:hidden;
 padding:30px;
+
+}
+
+/* steam effect */
+
+.steam{
+
+position:fixed;
+bottom:-100px;
+width:200px;
+height:200px;
+background:radial-gradient(circle,rgba(255,255,255,0.4),transparent);
+border-radius:50%;
+animation:steam 8s infinite;
+
+}
+
+.steam:nth-child(1){left:20%;animation-delay:0s}
+.steam:nth-child(2){left:50%;animation-delay:2s}
+.steam:nth-child(3){left:75%;animation-delay:4s}
+
+@keyframes steam{
+
+0%{transform:translateY(0) scale(.5);opacity:.4}
+100%{transform:translateY(-900px) scale(2);opacity:0}
 
 }
 
@@ -37,29 +63,29 @@ margin:auto;
 h1{
 
 text-align:center;
-margin-bottom:20px;
+margin-bottom:25px;
 
 }
 
 .machine{
 
-background:#fff;
+background:white;
 padding:30px;
 border-radius:20px;
-box-shadow:0 10px 30px rgba(0,0,0,0.1);
+box-shadow:0 10px 30px rgba(0,0,0,.1);
 text-align:center;
 
 }
 
 .box{
 
-width:140px;
-height:140px;
-background:#c7a17a;
-margin:auto;
+width:150px;
+height:150px;
+background:#c49a6c;
 border-radius:20px;
+margin:auto;
 position:relative;
-overflow:hidden;
+overflow:visible;
 
 }
 
@@ -69,16 +95,38 @@ width:40px;
 height:40px;
 border-radius:50%;
 position:absolute;
+bottom:20px;
+left:55px;
+
 }
 
-.red{background:#e74c3c;}
-.blue{background:#3498db;}
-.green{background:#2ecc71;}
-.yellow{background:#f1c40f;}
+.red{background:#e74c3c}
+.blue{background:#3498db}
+.green{background:#2ecc71}
+.yellow{background:#f1c40f}
+
+/* bounce */
+
+.bounce{
+
+animation:bounce .8s ease;
+
+}
+
+@keyframes bounce{
+
+0%{transform:translateY(0)}
+30%{transform:translateY(-120px)}
+60%{transform:translateY(-40px)}
+100%{transform:translateY(0)}
+
+}
+
+/* shake */
 
 .shake{
 
-animation:shake .5s infinite;
+animation:shake .5s;
 
 }
 
@@ -97,8 +145,8 @@ animation:shake .5s infinite;
 margin-top:20px;
 display:flex;
 gap:10px;
-justify-content:center;
 flex-wrap:wrap;
+justify-content:center;
 
 }
 
@@ -124,11 +172,10 @@ margin-top:20px;
 
 .card{
 
-background:#fff;
+background:#fafafa;
 padding:10px;
 border-radius:10px;
 text-align:center;
-box-shadow:0 5px 10px rgba(0,0,0,0.05);
 
 }
 
@@ -141,28 +188,14 @@ border-radius:20px;
 
 }
 
-.knowledge{
-
-margin-top:30px;
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-gap:15px;
-
-}
-
-.tip{
-
-background:white;
-padding:15px;
-border-radius:15px;
-box-shadow:0 5px 10px rgba(0,0,0,0.05);
-
-}
-
 </style>
 </head>
 
 <body>
+
+<div class="steam"></div>
+<div class="steam"></div>
+<div class="steam"></div>
 
 <div class="container">
 
@@ -201,30 +234,6 @@ box-shadow:0 5px 10px rgba(0,0,0,0.05);
 
 </div>
 
-<div class="knowledge">
-
-<div class="tip">
-<b>ความน่าจะเป็นคืออะไร</b>
-<p>เป็นการวัดโอกาสที่เหตุการณ์หนึ่งจะเกิดขึ้น มีค่า 0 ถึง 1</p>
-</div>
-
-<div class="tip">
-<b>เหตุการณ์สุ่ม</b>
-<p>เหตุการณ์ที่ไม่สามารถคาดเดาผลลัพธ์ได้ล่วงหน้า เช่น การหยิบลูกบอล</p>
-</div>
-
-<div class="tip">
-<b>การจำลอง (Simulation)</b>
-<p>ใช้คอมพิวเตอร์สุ่มเหตุการณ์หลายครั้งเพื่อดูแนวโน้มของผลลัพธ์</p>
-</div>
-
-<div class="tip">
-<b>Law of Large Numbers</b>
-<p>เมื่อจำนวนการทดลองมากขึ้น ผลลัพธ์จะเข้าใกล้ค่าทฤษฎี</p>
-</div>
-
-</div>
-
 </div>
 
 <script>
@@ -235,6 +244,13 @@ let balls=[...baseBalls]
 let replace=true
 
 let stats={red:0,blue:0,green:0,yellow:0}
+
+function playSound(){
+
+let audio=new Audio("https://assets.mixkit.co/active_storage/sfx/270/270-preview.mp3")
+audio.play()
+
+}
 
 function randomBall(){
 
@@ -250,7 +266,10 @@ return c
 function draw(n){
 
 let box=document.getElementById("box")
+
 box.classList.add("shake")
+
+playSound()
 
 setTimeout(()=>{
 
@@ -261,13 +280,32 @@ for(let i=0;i<n;i++){
 if(balls.length==0)break
 
 let c=randomBall()
+
 stats[c]++
+
+spawnBall(c)
 
 }
 
 update()
 
-},600)
+},500)
+
+}
+
+function spawnBall(color){
+
+let ball=document.createElement("div")
+
+ball.className="ball "+color+" bounce"
+
+document.getElementById("box").appendChild(ball)
+
+setTimeout(()=>{
+
+ball.remove()
+
+},900)
 
 }
 
@@ -278,7 +316,16 @@ b.innerText=stats.blue
 g.innerText=stats.green
 y.innerText=stats.yellow
 
-chart.data.datasets[0].data=[stats.red,stats.blue,stats.green,stats.yellow]
+let total=stats.red+stats.blue+stats.green+stats.yellow
+
+chart.data.datasets[0].data=[
+
+stats.red/total*100||0,
+stats.blue/total*100||0,
+stats.green/total*100||0,
+stats.yellow/total*100||0
+
+]
 
 chart.update()
 
@@ -294,6 +341,7 @@ function reset(){
 
 stats={red:0,blue:0,green:0,yellow:0}
 balls=[...baseBalls]
+
 update()
 
 }
@@ -305,16 +353,26 @@ let chart=new Chart(ctx,{
 type:"bar",
 
 data:{
+
 labels:["แดง","น้ำเงิน","เขียว","เหลือง"],
-datasets:[{
-label:"ผลลัพธ์จริง",
+
+datasets:[
+
+{
+label:"เปอร์เซ็นต์จริง",
 data:[0,0,0,0]
 },
+
 {
-label:"ค่าทฤษฎี",
+label:"เปอร์เซ็นต์ทฤษฎี",
 data:[40,30,20,10]
-}]
 }
+
+]
+
+},
+
+options:{responsive:true}
 
 })
 
