@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Probability Cafe Lab</title>
+<title>Coffee Probability Machine</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -21,14 +21,14 @@ font-family:'Prompt',sans-serif;
 
 body{
 
-background:#f4eee8;
-color:#3e2f23;
-overflow-x:hidden;
+background:#f3ece7;
 padding:30px;
+color:#3b2a20;
+overflow-x:hidden;
 
 }
 
-/* steam effect */
+/* steam */
 
 .steam{
 
@@ -36,15 +36,14 @@ position:fixed;
 bottom:-100px;
 width:200px;
 height:200px;
-background:radial-gradient(circle,rgba(255,255,255,0.4),transparent);
+background:radial-gradient(circle,rgba(255,255,255,.4),transparent);
 border-radius:50%;
 animation:steam 8s infinite;
 
 }
 
-.steam:nth-child(1){left:20%;animation-delay:0s}
-.steam:nth-child(2){left:50%;animation-delay:2s}
-.steam:nth-child(3){left:75%;animation-delay:4s}
+.steam:nth-child(1){left:20%}
+.steam:nth-child(2){left:60%;animation-delay:2s}
 
 @keyframes steam{
 
@@ -63,9 +62,11 @@ margin:auto;
 h1{
 
 text-align:center;
-margin-bottom:25px;
+margin-bottom:20px;
 
 }
+
+/* machine */
 
 .machine{
 
@@ -79,15 +80,16 @@ text-align:center;
 
 .box{
 
-width:150px;
-height:150px;
-background:#c49a6c;
+width:160px;
+height:160px;
+background:#6f4e37;
 border-radius:20px;
 margin:auto;
 position:relative;
-overflow:visible;
 
 }
+
+/* ball */
 
 .ball{
 
@@ -95,8 +97,8 @@ width:40px;
 height:40px;
 border-radius:50%;
 position:absolute;
-bottom:20px;
-left:55px;
+bottom:10px;
+left:60px;
 
 }
 
@@ -109,7 +111,7 @@ left:55px;
 
 .bounce{
 
-animation:bounce .8s ease;
+animation:bounce .8s;
 
 }
 
@@ -140,13 +142,15 @@ animation:shake .5s;
 
 }
 
+/* controls */
+
 .controls{
 
 margin-top:20px;
 display:flex;
 gap:10px;
-flex-wrap:wrap;
 justify-content:center;
+flex-wrap:wrap;
 
 }
 
@@ -160,6 +164,20 @@ color:white;
 cursor:pointer;
 
 }
+
+/* HUD */
+
+.hud{
+
+display:flex;
+justify-content:center;
+gap:20px;
+margin-top:20px;
+font-weight:500;
+
+}
+
+/* stats */
 
 .stats{
 
@@ -179,12 +197,69 @@ text-align:center;
 
 }
 
+/* chart */
+
 .chart{
 
 margin-top:30px;
 background:white;
 padding:20px;
 border-radius:20px;
+
+}
+
+/* knowledge */
+
+.knowledge{
+
+margin-top:30px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:15px;
+
+}
+
+.tip{
+
+background:white;
+padding:15px;
+border-radius:15px;
+box-shadow:0 5px 10px rgba(0,0,0,.05);
+
+}
+
+/* popup */
+
+.popup{
+
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.5);
+display:flex;
+align-items:center;
+justify-content:center;
+opacity:0;
+pointer-events:none;
+transition:.3s;
+
+}
+
+.popup.active{
+
+opacity:1;
+pointer-events:auto;
+
+}
+
+.popup-box{
+
+background:white;
+padding:30px;
+border-radius:20px;
+text-align:center;
 
 }
 
@@ -195,11 +270,10 @@ border-radius:20px;
 
 <div class="steam"></div>
 <div class="steam"></div>
-<div class="steam"></div>
 
 <div class="container">
 
-<h1>☕ Probability Cafe Lab</h1>
+<h1>☕ Coffee Probability Machine</h1>
 
 <div class="machine">
 
@@ -217,12 +291,20 @@ border-radius:20px;
 
 </div>
 
+<div class="hud">
+
+<div>Total: <span id="total">0</span></div>
+<div>Mode: <span id="mode">Replace</span></div>
+<div>Streak: <span id="streak">0</span></div>
+
+</div>
+
 <div class="stats">
 
-<div class="card">🔴 แดง <span id="r">0</span></div>
-<div class="card">🔵 น้ำเงิน <span id="b">0</span></div>
-<div class="card">🟢 เขียว <span id="g">0</span></div>
-<div class="card">🟡 เหลือง <span id="y">0</span></div>
+<div class="card">🔴 <span id="r">0%</span></div>
+<div class="card">🔵 <span id="b">0%</span></div>
+<div class="card">🟢 <span id="g">0%</span></div>
+<div class="card">🟡 <span id="y">0%</span></div>
 
 </div>
 
@@ -234,6 +316,38 @@ border-radius:20px;
 
 </div>
 
+<div class="knowledge">
+
+<div class="tip">
+<b>Random Experiment</b>
+การทดลองที่ไม่รู้ผลล่วงหน้า เช่น การหยิบลูกบอล
+</div>
+
+<div class="tip">
+<b>Sample Space</b>
+ผลลัพธ์ที่เป็นไปได้ทั้งหมด
+</div>
+
+<div class="tip">
+<b>Relative Frequency</b>
+ความถี่ที่เกิดขึ้นจริงจากการทดลอง
+</div>
+
+<div class="tip">
+<b>Law of Large Numbers</b>
+ทดลองมากขึ้น ผลลัพธ์จะเข้าใกล้ค่าความน่าจะเป็น
+</div>
+
+</div>
+
+</div>
+
+<div id="popup" class="popup">
+<div class="popup-box">
+<h2 id="popupText"></h2>
+<br>
+<button onclick="closePopup()">ปิด</button>
+</div>
 </div>
 
 <script>
@@ -245,7 +359,11 @@ let replace=true
 
 let stats={red:0,blue:0,green:0,yellow:0}
 
-function playSound(){
+let total=0
+let streak=0
+let lastColor=""
+
+function sound(){
 
 let audio=new Audio("https://assets.mixkit.co/active_storage/sfx/270/270-preview.mp3")
 audio.play()
@@ -269,7 +387,7 @@ let box=document.getElementById("box")
 
 box.classList.add("shake")
 
-playSound()
+sound()
 
 setTimeout(()=>{
 
@@ -282,8 +400,16 @@ if(balls.length==0)break
 let c=randomBall()
 
 stats[c]++
+total++
 
 spawnBall(c)
+
+if(c===lastColor)streak++
+else streak=1
+
+lastColor=c
+
+if(streak===5)achievement("🔥 5 streak!")
 
 }
 
@@ -305,27 +431,26 @@ setTimeout(()=>{
 
 ball.remove()
 
-},900)
+},800)
 
 }
 
 function update(){
 
-r.innerText=stats.red
-b.innerText=stats.blue
-g.innerText=stats.green
-y.innerText=stats.yellow
+totalText.innerText=total
+streakText.innerText=streak
 
-let total=stats.red+stats.blue+stats.green+stats.yellow
+let rP=stats.red/total*100||0
+let bP=stats.blue/total*100||0
+let gP=stats.green/total*100||0
+let yP=stats.yellow/total*100||0
 
-chart.data.datasets[0].data=[
+r.innerText=rP.toFixed(1)+"%"
+b.innerText=bP.toFixed(1)+"%"
+g.innerText=gP.toFixed(1)+"%"
+y.innerText=yP.toFixed(1)+"%"
 
-stats.red/total*100||0,
-stats.blue/total*100||0,
-stats.green/total*100||0,
-stats.yellow/total*100||0
-
-]
+chart.data.datasets[0].data=[rP,bP,gP,yP]
 
 chart.update()
 
@@ -335,14 +460,31 @@ function toggleMode(){
 
 replace=!replace
 
+mode.innerText=replace?"Replace":"No Replace"
+
 }
 
 function reset(){
 
 stats={red:0,blue:0,green:0,yellow:0}
 balls=[...baseBalls]
+total=0
+streak=0
 
 update()
+
+}
+
+function achievement(text){
+
+popupText.innerText=text
+popup.classList.add("active")
+
+}
+
+function closePopup(){
+
+popup.classList.remove("active")
 
 }
 
@@ -354,27 +496,24 @@ type:"bar",
 
 data:{
 
-labels:["แดง","น้ำเงิน","เขียว","เหลือง"],
+labels:["Red","Blue","Green","Yellow"],
 
-datasets:[
+datasets:[{
 
-{
-label:"เปอร์เซ็นต์จริง",
+label:"Percent",
+
 data:[0,0,0,0]
-},
 
-{
-label:"เปอร์เซ็นต์ทฤษฎี",
-data:[40,30,20,10]
-}
-
-]
+}]
 
 },
 
 options:{responsive:true}
 
 })
+
+let totalText=document.getElementById("total")
+let streakText=document.getElementById("streak")
 
 </script>
 
