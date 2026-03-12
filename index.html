@@ -5,9 +5,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>ห้องทดลองความน่าจะเป็นจากการสุ่มไพ่</title>
+<title>เครื่องมือวิเคราะห์ความน่าจะเป็นจากไพ่</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -15,88 +15,57 @@
 
 body{
 font-family:'Prompt',sans-serif;
-background:linear-gradient(135deg,#c7d2fe,#e0f2fe);
+background:#f8fafc;
 margin:0;
-padding:20px;
-text-align:center;
+padding:30px;
 }
 
 .container{
-max-width:1100px;
+max-width:1200px;
 margin:auto;
 }
 
 h1{
+text-align:center;
 color:#1e293b;
 }
 
-.card{
-font-size:90px;
-margin:20px;
+.section{
+background:white;
+padding:20px;
+margin-top:20px;
+border-radius:12px;
+box-shadow:0 2px 8px rgba(0,0,0,0.1);
 }
 
 button{
-background:#6366f1;
+background:#2563eb;
 color:white;
 border:none;
-padding:12px 18px;
-margin:6px;
-border-radius:10px;
-font-size:16px;
+padding:10px 16px;
+border-radius:8px;
+margin:5px;
 cursor:pointer;
 }
 
 button:hover{
-background:#4f46e5;
+background:#1d4ed8;
 }
 
-.stats{
-display:grid;
-grid-template-columns:repeat(4,1fr);
-gap:12px;
-margin-top:20px;
+select{
+padding:8px;
+margin-left:10px;
 }
 
-.stat{
-background:white;
-padding:15px;
-border-radius:12px;
-box-shadow:0 3px 8px rgba(0,0,0,0.1);
-}
-
-.charts{
+.grid{
 display:grid;
 grid-template-columns:1fr 1fr;
 gap:20px;
-margin-top:30px;
-}
-
-.knowledge{
-margin-top:40px;
-text-align:left;
-}
-
-.knowledge h2{
-text-align:center;
+margin-top:20px;
 }
 
 .knowledge div{
-background:white;
-padding:12px;
-margin:8px 0;
-border-radius:10px;
-}
-
-.popup{
-position:fixed;
-top:20px;
-right:20px;
-background:#22c55e;
-color:white;
-padding:15px;
-border-radius:10px;
-display:none;
-font-size:18px;
+padding:6px 0;
 }
 
 </style>
@@ -106,88 +75,91 @@ font-size:18px;
 
 <div class="container">
 
-<h1>🃏 ห้องทดลองความน่าจะเป็น (การสุ่มไพ่)</h1>
+<h1>🃏 เครื่องมือวิเคราะห์ความน่าจะเป็นจากไพ่</h1>
 
-<p>ทดลองสุ่มไพ่จากสำรับ 52 ใบ เพื่อศึกษาความน่าจะเป็น</p>
+<div class="section">
 
-<div class="card" id="card">?</div>
+<h2>คำนวณความน่าจะเป็น</h2>
 
-<div>
+เลือกเหตุการณ์
 
-<button onclick="drawCard()">สุ่มไพ่ 1 ใบ</button>
-<button onclick="simulate(10)">จำลอง 10 ครั้ง</button>
-<button onclick="simulate(100)">จำลอง 100 ครั้ง</button>
-<button onclick="simulate(1000)">จำลอง 1000 ครั้ง</button>
-<button onclick="resetStats()">รีเซ็ต</button>
+<select id="event">
 
-</div>
+<option value="spade">ได้ไพ่โพดำ</option>
+<option value="heart">ได้ไพ่โพแดง</option>
+<option value="ace">ได้ไพ่ Ace</option>
+<option value="red">ได้ไพ่สีแดง</option>
 
-<div class="stats">
+</select>
 
-<div class="stat">♥ โพแดง<br><span id="hearts">0</span></div>
-<div class="stat">♦ ข้าวหลามตัด<br><span id="diamonds">0</span></div>
-<div class="stat">♣ ดอกจิก<br><span id="clubs">0</span></div>
-<div class="stat">♠ โพดำ<br><span id="spades">0</span></div>
+<button onclick="calculate()">คำนวณ</button>
+
+<p id="result"></p>
 
 </div>
 
-<p>จำนวนการสุ่มทั้งหมด: <span id="total">0</span></p>
+<div class="section">
 
-<div class="charts">
+<h2>ทดลองการสุ่ม</h2>
+
+<button onclick="simulate(10)">ทดลอง 10 ครั้ง</button>
+<button onclick="simulate(100)">ทดลอง 100 ครั้ง</button>
+<button onclick="simulate(1000)">ทดลอง 1000 ครั้ง</button>
+<button onclick="reset()">รีเซ็ต</button>
+
+<p>จำนวนการทดลอง: <span id="total">0</span></p>
+
+</div>
+
+<div class="section grid">
 
 <canvas id="pieChart"></canvas>
 <canvas id="barChart"></canvas>
 
 </div>
 
-<div class="knowledge">
+<div class="section knowledge">
 
-<h2>📚 ความรู้เรื่องความน่าจะเป็น</h2>
+<h2>ความรู้เกี่ยวกับความน่าจะเป็น</h2>
 
-<div>1️⃣ ไพ่หนึ่งสำรับมีทั้งหมด 52 ใบ</div>
-<div>2️⃣ ไพ่แต่ละดอกมี 13 ใบ</div>
-<div>3️⃣ โอกาสได้ดอกใดดอกหนึ่ง = 25%</div>
-<div>4️⃣ โอกาสได้ไพ่ A = 4 / 52</div>
-<div>5️⃣ ไพ่สีแดงมี 26 ใบ</div>
-<div>6️⃣ ไพ่สีดำมี 26 ใบ</div>
-<div>7️⃣ การสุ่มหลายครั้งเรียกว่า การทดลองแบบสุ่ม</div>
-<div>8️⃣ ยิ่งทดลองมาก ผลจะยิ่งใกล้ค่าทางทฤษฎี</div>
-<div>9️⃣ ไพ่ 2 ใบไม่ซ้ำกันมีโอกาส 51 / 52</div>
-<div>🔟 การเลือกไพ่ 5 ใบจาก 52 ใบ มี 2,598,960 วิธี</div>
-<div>11️⃣ โอกาสได้ดอกเดียวกัน = 1 / 4</div>
-<div>12️⃣ ความน่าจะเป็นถูกใช้ใน AI การเงิน และสถิติ</div>
-
-</div>
+<div>1. ไพ่หนึ่งสำรับมี 52 ใบ</div>
+<div>2. ไพ่แต่ละดอกมี 13 ใบ</div>
+<div>3. โอกาสได้ดอกใดดอกหนึ่ง = 25%</div>
+<div>4. โอกาสได้ Ace = 4/52</div>
+<div>5. ไพ่แดงมี 26 ใบ</div>
+<div>6. ไพ่ดำมี 26 ใบ</div>
+<div>7. การทดลองแบบสุ่ม</div>
+<div>8. Law of Large Numbers</div>
+<div>9. Monte Carlo Simulation</div>
+<div>10. การเลือกไพ่ 5 ใบ = 2,598,960 วิธี</div>
+<div>11. ความน่าจะเป็นใช้ใน AI</div>
+<div>12. ใช้ในเกมและคาสิโน</div>
 
 </div>
 
-<div class="popup" id="popup"></div>
+</div>
 
 <script>
 
 const suits=["♥","♦","♣","♠"]
 const values=["A","2","3","4","5","6","7","8","9","10","J","Q","K"]
 
-let stats={"♥":0,"♦":0,"♣":0,"♠":0}
-let valueStats={}
-values.forEach(v=>valueStats[v]=0)
+let suitStats=[0,0,0,0]
+let valueStats=Array(13).fill(0)
 
 let total=0
 
-function drawCard(){
+function calculate(){
 
-let suit=suits[Math.floor(Math.random()*4)]
-let value=values[Math.floor(Math.random()*13)]
+let e=document.getElementById("event").value
+let text=""
 
-document.getElementById("card").innerHTML=value+suit
+if(e=="spade") text="โอกาสได้โพดำ = 13 / 52 = 25%"
+if(e=="heart") text="โอกาสได้โพแดง = 13 / 52 = 25%"
+if(e=="ace") text="โอกาสได้ Ace = 4 / 52 ≈ 7.69%"
+if(e=="red") text="โอกาสได้ไพ่สีแดง = 26 / 52 = 50%"
 
-stats[suit]++
-valueStats[value]++
-total++
-
-showPopup(value+suit)
-
-updateStats()
+document.getElementById("result").innerText=text
 
 }
 
@@ -195,54 +167,30 @@ function simulate(n){
 
 for(let i=0;i<n;i++){
 
-let suit=suits[Math.floor(Math.random()*4)]
-let value=values[Math.floor(Math.random()*13)]
+let s=Math.floor(Math.random()*4)
+let v=Math.floor(Math.random()*13)
 
-stats[suit]++
-valueStats[value]++
+suitStats[s]++
+valueStats[v]++
 total++
 
 }
 
-updateStats()
-
-}
-
-function showPopup(card){
-
-let popup=document.getElementById("popup")
-
-popup.innerHTML="สุ่มได้ไพ่ "+card
-popup.style.display="block"
-
-setTimeout(()=>popup.style.display="none",1500)
-
-}
-
-function updateStats(){
-
-document.getElementById("hearts").innerText=stats["♥"]
-document.getElementById("diamonds").innerText=stats["♦"]
-document.getElementById("clubs").innerText=stats["♣"]
-document.getElementById("spades").innerText=stats["♠"]
+updateCharts()
 
 document.getElementById("total").innerText=total
 
-updateCharts()
-
 }
 
-function resetStats(){
+function reset(){
 
-stats={"♥":0,"♦":0,"♣":0,"♠":0}
-
-values.forEach(v=>valueStats[v]=0)
-
+suitStats=[0,0,0,0]
+valueStats=Array(13).fill(0)
 total=0
 
-document.getElementById("card").innerHTML="?"
+updateCharts()
 
-updateStats()
+document.getElementById("total").innerText=0
 
 }
 
@@ -258,23 +206,16 @@ let barChart=new Chart(document.getElementById("barChart"),{
 type:"bar",
 data:{
 labels:values,
-datasets:[{label:"จำนวนไพ่แต่ละค่า",data:Array(13).fill(0)}]
+datasets:[{label:"จำนวนไพ่",data:Array(13).fill(0)}]
 }
 })
 
 function updateCharts(){
 
-pieChart.data.datasets[0].data=[
-stats["♥"],
-stats["♦"],
-stats["♣"],
-stats["♠"]
-]
-
+pieChart.data.datasets[0].data=suitStats
 pieChart.update()
 
-barChart.data.datasets[0].data=values.map(v=>valueStats[v])
-
+barChart.data.datasets[0].data=valueStats
 barChart.update()
 
 }
