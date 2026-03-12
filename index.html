@@ -28,7 +28,7 @@ overflow-x:hidden;
 }
 
 .container{
-max-width:1000px;
+max-width:1100px;
 margin:auto;
 padding:20px;
 }
@@ -40,7 +40,7 @@ margin-bottom:25px;
 
 header h1{
 color:#e63946;
-font-size:1.9rem;
+font-size:2rem;
 }
 
 /* CARD */
@@ -60,19 +60,20 @@ text-align:center;
 display:flex;
 justify-content:center;
 align-items:center;
-height:160px;
+height:180px;
+perspective:800px;
 }
 
 .coin{
-width:110px;
-height:110px;
+width:120px;
+height:120px;
 border-radius:50%;
 background:radial-gradient(circle,#ffd700,#d9a400);
 border:6px solid #c48b00;
 display:flex;
 align-items:center;
 justify-content:center;
-font-size:42px;
+font-size:48px;
 box-shadow:
 inset 0 0 10px rgba(255,255,255,0.9),
 0 10px 20px rgba(0,0,0,0.2);
@@ -97,6 +98,11 @@ font-weight:600;
 color:white;
 background:linear-gradient(135deg,#ff6b6b,#e63946);
 cursor:pointer;
+transition:.2s;
+}
+
+button:hover{
+transform:translateY(-2px);
 }
 
 /* STATS */
@@ -109,7 +115,7 @@ margin-top:20px;
 
 .stat h3{
 color:#e63946;
-font-size:1.7rem;
+font-size:1.8rem;
 }
 
 /* CHART */
@@ -121,8 +127,9 @@ margin-top:10px;
 }
 
 .chart-box{
-width:260px;
-height:260px;
+width:420px;
+height:420px;
+max-width:90vw;
 }
 
 .chart-box canvas{
@@ -231,6 +238,7 @@ margin-bottom:12px;
 </div>
 
 <div class="stats">
+
 <div class="stat">
 <h3 id="h">0</h3>
 <p>หัว</p>
@@ -240,6 +248,7 @@ margin-bottom:12px;
 <h3 id="t">0</h3>
 <p>ก้อย</p>
 </div>
+
 </div>
 
 </div>
@@ -293,20 +302,20 @@ const coin=document.getElementById("coin")
 
 /* SOUND */
 
-const spin=new Audio("https://actions.google.com/sounds/v1/coins/coin_spin.ogg")
-const win=new Audio("https://actions.google.com/sounds/v1/cartoon/party_horn.ogg")
+const spin=new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8b0a9c8c1.mp3")
+const win=new Audio("https://cdn.pixabay.com/download/audio/2021/08/04/audio_0625c2c6f8.mp3")
 
-spin.preload="auto"
-win.preload="auto"
+spin.volume=0.8
+win.volume=0.9
 
 function playSpin(){
 spin.currentTime=0
-spin.play()
+spin.play().catch(()=>{})
 }
 
 function playWin(){
 win.currentTime=0
-win.play()
+win.play().catch(()=>{})
 }
 
 /* CHART */
@@ -331,7 +340,7 @@ maintainAspectRatio:false,
 plugins:{
 datalabels:{
 color:"#fff",
-font:{weight:"bold"},
+font:{weight:"bold",size:18},
 formatter:(v,ctx)=>{
 let total=ctx.chart.data.datasets[0].data.reduce((a,b)=>a+b,0)
 if(total===0)return"0%"
@@ -345,10 +354,14 @@ return Math.round(v/total*100)+"%"
 })
 
 function update(){
+
 document.getElementById("h").textContent=heads
 document.getElementById("t").textContent=tails
+
 chart.data.datasets[0].data=[heads,tails]
+
 chart.update()
+
 }
 
 /* TOSS */
