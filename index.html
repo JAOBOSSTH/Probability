@@ -8,14 +8,9 @@
 <title>Coin Toss Probability Lab</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-
-/* =====================
-GLOBAL
-===================== */
 
 *{
 box-sizing:border-box;
@@ -27,18 +22,13 @@ font-family:'Prompt',sans-serif;
 body{
 background:#fafafa;
 color:#333;
-line-height:1.6;
 }
 
 .container{
-max-width:1200px;
+max-width:1100px;
 margin:auto;
 padding:20px;
 }
-
-/* =====================
-HEADER
-===================== */
 
 header{
 text-align:center;
@@ -46,18 +36,11 @@ margin-bottom:40px;
 }
 
 header h1{
-font-size:2.2rem;
 color:#d64545;
-margin-bottom:8px;
+font-size:2rem;
 }
 
-header p{
-color:#666;
-}
-
-/* =====================
-CARD STYLE
-===================== */
+/* CARD */
 
 .card{
 background:white;
@@ -67,49 +50,54 @@ margin-bottom:25px;
 box-shadow:0 8px 20px rgba(0,0,0,0.08);
 }
 
-/* =====================
-COIN AREA
-===================== */
+/* COIN 3D */
 
-.coin-area{
-display:flex;
-flex-direction:column;
-align-items:center;
-gap:20px;
+.coin-wrapper{
+perspective:1000px;
 }
 
 .coin{
 width:120px;
 height:120px;
+position:relative;
+transform-style:preserve-3d;
+transition:transform 1s;
+}
+
+.coin.flip{
+transform:rotateY(1080deg);
+}
+
+.face{
+position:absolute;
+width:100%;
+height:100%;
 border-radius:50%;
-background:linear-gradient(145deg,#ff6b6b,#e63946);
-color:white;
 display:flex;
 align-items:center;
 justify-content:center;
-font-size:28px;
+font-size:32px;
 font-weight:600;
-box-shadow:0 6px 15px rgba(0,0,0,0.15);
-transition:transform 0.6s;
+color:white;
+backface-visibility:hidden;
 }
 
-.coin.spin{
-animation:spin 0.8s linear;
+.heads{
+background:linear-gradient(145deg,#ff6b6b,#e63946);
 }
 
-@keyframes spin{
-0%{transform:rotateY(0deg)}
-100%{transform:rotateY(720deg)}
+.tails{
+background:linear-gradient(145deg,#ffa8a8,#ff8787);
+transform:rotateY(180deg);
 }
 
-/* =====================
-BUTTONS
-===================== */
+/* BUTTON */
 
 .buttons{
+margin-top:20px;
 display:flex;
-gap:10px;
 flex-wrap:wrap;
+gap:10px;
 justify-content:center;
 }
 
@@ -118,11 +106,10 @@ border:none;
 padding:10px 18px;
 border-radius:8px;
 cursor:pointer;
-font-size:14px;
-font-weight:500;
 background:#ff6b6b;
 color:white;
-transition:all .2s;
+font-weight:500;
+transition:.2s;
 }
 
 button:hover{
@@ -131,92 +118,77 @@ transform:translateY(-2px);
 }
 
 button:active{
-transform:scale(0.95);
+transform:scale(.95);
 }
 
-/* =====================
-STATS
-===================== */
+/* STATS */
 
 .stats{
 display:flex;
 justify-content:space-around;
-margin-top:15px;
+margin-top:20px;
 flex-wrap:wrap;
-gap:10px;
 }
 
-.stat-box{
+.stat{
 text-align:center;
 }
 
-.stat-box h3{
+.stat h3{
 color:#e63946;
 }
 
-/* =====================
-CHART
-===================== */
+/* POPUP */
 
-.chart-box{
-max-width:500px;
-margin:auto;
+.popup{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.4);
+display:none;
+align-items:center;
+justify-content:center;
 }
 
-/* =====================
-KNOWLEDGE CARDS
-===================== */
+.popup-box{
+background:white;
+padding:30px;
+border-radius:12px;
+text-align:center;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
 
-.knowledge-grid{
+.popup-box h2{
+color:#e63946;
+margin-bottom:10px;
+}
+
+/* KNOWLEDGE */
+
+.grid{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:20px;
+gap:18px;
 }
 
 .knowledge{
+background:white;
 padding:18px;
-border-radius:12px;
-background:#fff;
+border-radius:10px;
 box-shadow:0 6px 15px rgba(0,0,0,0.08);
-transition:transform .2s;
-}
-
-.knowledge:hover{
-transform:translateY(-4px);
 }
 
 .knowledge h4{
 color:#d64545;
-margin-bottom:8px;
+margin-bottom:6px;
 }
-
-/* =====================
-FOOTER
-===================== */
 
 footer{
 text-align:center;
-margin-top:40px;
+margin-top:30px;
 color:#777;
-font-size:14px;
-}
-
-/* =====================
-RESPONSIVE
-===================== */
-
-@media(max-width:600px){
-
-.coin{
-width:90px;
-height:90px;
-font-size:22px;
-}
-
-header h1{
-font-size:1.6rem;
-}
-
 }
 
 </style>
@@ -231,45 +203,47 @@ font-size:1.6rem;
 <p>ทดลองโยนเหรียญเพื่อเรียนรู้ความน่าจะเป็น</p>
 </header>
 
-<!-- =====================
-COIN SIMULATOR
-===================== -->
+<!-- COIN -->
 
-<div class="card coin-area">
+<div class="card" style="text-align:center">
 
-<div id="coin" class="coin">?</div>
+<div class="coin-wrapper">
+<div id="coin" class="coin">
+
+<div class="face heads">H</div>
+<div class="face tails">T</div>
+
+</div>
+</div>
 
 <div class="buttons">
 
 <button onclick="tossCoin()">โยนเหรียญ</button>
-
 <button onclick="tossMultiple(100)">โยน 100 ครั้ง</button>
-
 <button onclick="tossMultiple(1000)">โยน 1000 ครั้ง</button>
-
 <button onclick="resetData()">รีเซ็ต</button>
 
 </div>
 
 <div class="stats">
 
-<div class="stat-box">
-<h3 id="headsCount">0</h3>
+<div class="stat">
+<h3 id="heads">0</h3>
 <p>หัว</p>
 </div>
 
-<div class="stat-box">
-<h3 id="tailsCount">0</h3>
+<div class="stat">
+<h3 id="tails">0</h3>
 <p>ก้อย</p>
 </div>
 
-<div class="stat-box">
-<h3 id="headsPercent">0%</h3>
+<div class="stat">
+<h3 id="hp">0%</h3>
 <p>เปอร์เซ็นต์หัว</p>
 </div>
 
-<div class="stat-box">
-<h3 id="tailsPercent">0%</h3>
+<div class="stat">
+<h3 id="tp">0%</h3>
 <p>เปอร์เซ็นต์ก้อย</p>
 </div>
 
@@ -277,132 +251,74 @@ COIN SIMULATOR
 
 </div>
 
-<!-- =====================
-CHART
-===================== -->
+<!-- CHART -->
 
-<div class="card chart-box">
-
+<div class="card">
 <canvas id="chart"></canvas>
-
 </div>
 
-<!-- =====================
-MATH CONCEPT
-===================== -->
+<!-- KNOWLEDGE -->
 
 <div class="card">
 
-<h2 style="margin-bottom:10px;color:#d64545;">แนวคิดทางคณิตศาสตร์</h2>
+<h2 style="margin-bottom:20px;color:#d64545;">ความรู้ Probability</h2>
 
-<p>
-ความน่าจะเป็นของการออกหัวหรือก้อยของเหรียญที่ยุติธรรมจะมีค่าเท่ากัน
-</p>
+<div class="grid">
 
-<div style="margin-top:10px">
-
-P(\text{หัว}) = \frac{1}{2}
-
-</div>
-
-<div style="margin-top:10px">
-
-P(\text{ก้อย}) = \frac{1}{2}
-
-</div>
-
-<p style="margin-top:10px">
-เมื่อจำนวนการทดลองเพิ่มขึ้น ผลลัพธ์จากการทดลองจะเข้าใกล้ค่าความน่าจะเป็นตามทฤษฎี
-</p>
-
-</div>
-
-<!-- =====================
-KNOWLEDGE
-===================== -->
-
-<div class="card">
-
-<h2 style="margin-bottom:20px;color:#d64545;">ความรู้เกี่ยวกับ Probability</h2>
-
-<div class="knowledge-grid">
-
-<div class="knowledge">
-<h4>ความน่าจะเป็นคืออะไร</h4>
-<p>เป็นการวัดโอกาสที่เหตุการณ์หนึ่งจะเกิดขึ้น</p>
-</div>
-
-<div class="knowledge">
-<h4>Sample Space</h4>
-<p>เซตของผลลัพธ์ทั้งหมดที่อาจเกิดขึ้น</p>
-</div>
-
-<div class="knowledge">
-<h4>Event</h4>
-<p>เหตุการณ์ที่เราสนใจใน Sample Space</p>
-</div>
-
-<div class="knowledge">
-<h4>Probability Range</h4>
-<p>ค่าความน่าจะเป็นอยู่ระหว่าง 0 ถึง 1</p>
-</div>
-
-<div class="knowledge">
-<h4>Experimental Probability</h4>
-<p>ความน่าจะเป็นจากการทดลองจริง</p>
-</div>
-
-<div class="knowledge">
-<h4>Theoretical Probability</h4>
-<p>ความน่าจะเป็นตามสูตรทางคณิตศาสตร์</p>
-</div>
-
-<div class="knowledge">
-<h4>Random Experiment</h4>
-<p>การทดลองที่ไม่สามารถรู้ผลลัพธ์ล่วงหน้า</p>
-</div>
-
-<div class="knowledge">
-<h4>Addition Rule</h4>
-<p>ใช้หาความน่าจะเป็นของเหตุการณ์รวม</p>
-</div>
-
-<div class="knowledge">
-<h4>Multiplication Rule</h4>
-<p>ใช้หาความน่าจะเป็นของเหตุการณ์ต่อเนื่อง</p>
-</div>
-
-<div class="knowledge">
-<h4>Law of Large Numbers</h4>
-<p>การทดลองจำนวนมากจะเข้าใกล้ค่าทฤษฎี</p>
-</div>
+<div class="knowledge"><h4>Probability</h4><p>การวัดโอกาสของเหตุการณ์</p></div>
+<div class="knowledge"><h4>Sample Space</h4><p>ผลลัพธ์ที่เป็นไปได้ทั้งหมด</p></div>
+<div class="knowledge"><h4>Event</h4><p>เหตุการณ์ที่สนใจ</p></div>
+<div class="knowledge"><h4>Random Experiment</h4><p>การทดลองที่เดาผลไม่ได้</p></div>
+<div class="knowledge"><h4>Theoretical</h4><p>ความน่าจะเป็นตามสูตร</p></div>
+<div class="knowledge"><h4>Experimental</h4><p>ความน่าจะเป็นจากการทดลอง</p></div>
+<div class="knowledge"><h4>Range</h4><p>ค่าระหว่าง 0 ถึง 1</p></div>
+<div class="knowledge"><h4>Addition Rule</h4><p>ความน่าจะเป็นเหตุการณ์รวม</p></div>
+<div class="knowledge"><h4>Multiplication Rule</h4><p>เหตุการณ์ต่อเนื่อง</p></div>
+<div class="knowledge"><h4>Law of Large Numbers</h4><p>การทดลองมากจะเข้าใกล้ค่าทฤษฎี</p></div>
 
 </div>
 
 </div>
 
 <footer>
-
-<p>Probability Learning Web App</p>
-
+Probability Learning Web App
 </footer>
+
+</div>
+
+<!-- POPUP -->
+
+<div id="popup" class="popup">
+
+<div class="popup-box">
+
+<h2 id="popupResult">ผลลัพธ์</h2>
+
+<button onclick="closePopup()">ปิด</button>
+
+</div>
 
 </div>
 
 <script>
 
-/* =====================
-DATA
-===================== */
+/* DATA */
 
 let heads = 0
 let tails = 0
 
 const coin = document.getElementById("coin")
 
-/* =====================
-CHART SETUP
-===================== */
+/* SOUND */
+
+function playSound(){
+
+const audio = new Audio("https://actions.google.com/sounds/v1/coins/coin_flip.ogg")
+audio.play()
+
+}
+
+/* CHART */
 
 const ctx = document.getElementById("chart")
 
@@ -414,91 +330,93 @@ datasets:[{
 data:[0,0],
 backgroundColor:['#ff6b6b','#ffd6d6']
 }]
-},
-options:{
-responsive:true
 }
 })
 
-/* =====================
-TOSS FUNCTION
-===================== */
+/* TOSS */
 
 function tossCoin(){
 
-coin.classList.add("spin")
+playSound()
+
+coin.classList.add("flip")
 
 setTimeout(()=>{
 
-const result = Math.random() < 0.5 ? "heads" : "tails"
+const result = Math.random()<0.5 ? "heads":"tails"
 
 if(result==="heads"){
 heads++
-coin.textContent="H"
+showPopup("ออกหัว 🪙")
 }else{
 tails++
-coin.textContent="T"
+showPopup("ออกก้อย 🪙")
 }
 
 updateStats()
 
-coin.classList.remove("spin")
+coin.classList.remove("flip")
 
-},400)
+},900)
 
 }
 
-/* =====================
-MULTIPLE TOSS
-===================== */
+/* MULTIPLE */
 
-function tossMultiple(times){
+function tossMultiple(n){
 
-for(let i=0;i<times;i++){
+playSound()
 
+for(let i=0;i<n;i++){
 Math.random()<0.5 ? heads++ : tails++
-
 }
-
-coin.textContent="🎲"
 
 updateStats()
 
+showPopup("สุ่ม "+n+" ครั้ง สำเร็จ")
+
 }
 
-/* =====================
-UPDATE STATS
-===================== */
+/* UPDATE */
 
 function updateStats(){
 
-const total = heads + tails
+const total = heads+tails
 
-const hp = total ? ((heads/total)*100).toFixed(1) : 0
-const tp = total ? ((tails/total)*100).toFixed(1) : 0
+let hp = total?((heads/total)*100).toFixed(1):0
+let tp = total?((tails/total)*100).toFixed(1):0
 
-document.getElementById("headsCount").textContent = heads
-document.getElementById("tailsCount").textContent = tails
-
-document.getElementById("headsPercent").textContent = hp + "%"
-document.getElementById("tailsPercent").textContent = tp + "%"
+document.getElementById("heads").textContent=heads
+document.getElementById("tails").textContent=tails
+document.getElementById("hp").textContent=hp+"%"
+document.getElementById("tp").textContent=tp+"%"
 
 chart.data.datasets[0].data=[heads,tails]
 chart.update()
 
 }
 
-/* =====================
-RESET
-===================== */
+/* POPUP */
+
+function showPopup(text){
+
+document.getElementById("popupResult").textContent=text
+document.getElementById("popup").style.display="flex"
+
+}
+
+function closePopup(){
+
+document.getElementById("popup").style.display="none"
+
+}
+
+/* RESET */
 
 function resetData(){
 
 heads=0
 tails=0
-
-coin.textContent="?"
-
 updateStats()
 
 }
