@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Ball Probability Simulator</title>
+<title>Probability Cafe Lab</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -19,80 +20,96 @@ font-family:'Prompt',sans-serif;
 }
 
 body{
-background:linear-gradient(135deg,#1f2937,#111827);
-color:white;
-display:flex;
-justify-content:center;
-align-items:center;
-min-height:100vh;
+
+background:#f5eee6;
+color:#3e2f23;
+padding:30px;
+
 }
 
-.app{
+.container{
 
-width:900px;
-background:#1f2937;
-border-radius:20px;
-padding:30px;
-box-shadow:0 20px 40px rgba(0,0,0,0.5);
+max-width:1000px;
+margin:auto;
 
 }
 
 h1{
+
 text-align:center;
 margin-bottom:20px;
-}
-
-.controls{
-display:flex;
-gap:10px;
-flex-wrap:wrap;
-justify-content:center;
-margin-bottom:20px;
-}
-
-button{
-
-padding:10px 18px;
-border:none;
-border-radius:10px;
-cursor:pointer;
-background:#3b82f6;
-color:white;
-font-weight:500;
-transition:.2s;
 
 }
 
-button:hover{
-transform:scale(1.05);
+.machine{
+
+background:#fff;
+padding:30px;
+border-radius:20px;
+box-shadow:0 10px 30px rgba(0,0,0,0.1);
+text-align:center;
+
 }
 
-.reset{
-background:#ef4444;
-}
+.box{
 
-.toggle{
-background:#10b981;
-}
-
-.ball-area{
-
-display:flex;
-justify-content:center;
-align-items:center;
-height:120px;
-margin-bottom:20px;
+width:140px;
+height:140px;
+background:#c7a17a;
+margin:auto;
+border-radius:20px;
+position:relative;
+overflow:hidden;
 
 }
 
 .ball{
 
-width:80px;
-height:80px;
+width:40px;
+height:40px;
 border-radius:50%;
-background:gray;
-transition:.4s;
-box-shadow:0 5px 15px rgba(0,0,0,0.5);
+position:absolute;
+}
+
+.red{background:#e74c3c;}
+.blue{background:#3498db;}
+.green{background:#2ecc71;}
+.yellow{background:#f1c40f;}
+
+.shake{
+
+animation:shake .5s infinite;
+
+}
+
+@keyframes shake{
+
+0%{transform:translateX(0)}
+25%{transform:translateX(6px)}
+50%{transform:translateX(-6px)}
+75%{transform:translateX(4px)}
+100%{transform:translateX(0)}
+
+}
+
+.controls{
+
+margin-top:20px;
+display:flex;
+gap:10px;
+justify-content:center;
+flex-wrap:wrap;
+
+}
+
+button{
+
+padding:10px 16px;
+border:none;
+border-radius:10px;
+background:#6f4e37;
+color:white;
+cursor:pointer;
 
 }
 
@@ -107,48 +124,38 @@ margin-top:20px;
 
 .card{
 
-background:#111827;
+background:#fff;
 padding:10px;
 border-radius:10px;
 text-align:center;
+box-shadow:0 5px 10px rgba(0,0,0,0.05);
 
 }
 
-canvas{
-margin-top:20px;
+.chart{
+
+margin-top:30px;
 background:white;
-border-radius:10px;
-padding:10px;
-}
-
-.popup{
-
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.6);
-display:flex;
-justify-content:center;
-align-items:center;
-opacity:0;
-pointer-events:none;
-transition:.3s;
+padding:20px;
+border-radius:20px;
 
 }
 
-.popup.active{
-opacity:1;
-pointer-events:auto;
+.knowledge{
+
+margin-top:30px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:15px;
+
 }
 
-.popup-box{
+.tip{
 
-background:#111827;
-padding:30px;
+background:white;
+padding:15px;
 border-radius:15px;
-text-align:center;
+box-shadow:0 5px 10px rgba(0,0,0,0.05);
 
 }
 
@@ -157,9 +164,13 @@ text-align:center;
 
 <body>
 
-<div class="app">
+<div class="container">
 
-<h1>🎱 Ball Probability Simulator</h1>
+<h1>☕ Probability Cafe Lab</h1>
+
+<div class="machine">
+
+<div id="box" class="box"></div>
 
 <div class="controls">
 
@@ -167,38 +178,50 @@ text-align:center;
 <button onclick="draw(200)">สุ่ม 200</button>
 <button onclick="draw(5000)">สุ่ม 5000</button>
 
-<button class="toggle" onclick="toggleMode()">โหมด: ใส่คืน</button>
+<button onclick="toggleMode()">โหมดใส่คืน</button>
 
-<button class="reset" onclick="resetAll()">รีเซ็ต</button>
-
-</div>
-
-<div class="ball-area">
-
-<div id="ball" class="ball"></div>
+<button onclick="reset()">รีเซ็ต</button>
 
 </div>
 
 <div class="stats">
 
-<div class="card">🔴 แดง <br><span id="red">0</span></div>
-<div class="card">🔵 น้ำเงิน <br><span id="blue">0</span></div>
-<div class="card">🟢 เขียว <br><span id="green">0</span></div>
-<div class="card">🟡 เหลือง <br><span id="yellow">0</span></div>
+<div class="card">🔴 แดง <span id="r">0</span></div>
+<div class="card">🔵 น้ำเงิน <span id="b">0</span></div>
+<div class="card">🟢 เขียว <span id="g">0</span></div>
+<div class="card">🟡 เหลือง <span id="y">0</span></div>
 
 </div>
+
+</div>
+
+<div class="chart">
 
 <canvas id="chart"></canvas>
 
 </div>
 
-<div id="popup" class="popup">
+<div class="knowledge">
 
-<div class="popup-box">
+<div class="tip">
+<b>ความน่าจะเป็นคืออะไร</b>
+<p>เป็นการวัดโอกาสที่เหตุการณ์หนึ่งจะเกิดขึ้น มีค่า 0 ถึง 1</p>
+</div>
 
-<h2 id="popupText"></h2>
-<br>
-<button onclick="closePopup()">ปิด</button>
+<div class="tip">
+<b>เหตุการณ์สุ่ม</b>
+<p>เหตุการณ์ที่ไม่สามารถคาดเดาผลลัพธ์ได้ล่วงหน้า เช่น การหยิบลูกบอล</p>
+</div>
+
+<div class="tip">
+<b>การจำลอง (Simulation)</b>
+<p>ใช้คอมพิวเตอร์สุ่มเหตุการณ์หลายครั้งเพื่อดูแนวโน้มของผลลัพธ์</p>
+</div>
+
+<div class="tip">
+<b>Law of Large Numbers</b>
+<p>เมื่อจำนวนการทดลองมากขึ้น ผลลัพธ์จะเข้าใกล้ค่าทฤษฎี</p>
+</div>
 
 </div>
 
@@ -206,130 +229,72 @@ text-align:center;
 
 <script>
 
-let baseBalls=[
-"red","red","red","red",
-"blue","blue","blue",
-"green","green",
-"yellow"
-]
-
+let baseBalls=["red","red","red","red","blue","blue","blue","green","green","yellow"]
 let balls=[...baseBalls]
 
-let replaceMode=true
+let replace=true
 
-let stats={
-red:0,
-blue:0,
-green:0,
-yellow:0
-}
-
-function sound(){
-
-let audio=new Audio("https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3")
-audio.play()
-
-}
+let stats={red:0,blue:0,green:0,yellow:0}
 
 function randomBall(){
 
-let index=Math.floor(Math.random()*balls.length)
-let color=balls[index]
+let i=Math.floor(Math.random()*balls.length)
+let c=balls[i]
 
-if(!replaceMode){
-balls.splice(index,1)
-}
+if(!replace)balls.splice(i,1)
 
-return color
+return c
 
 }
 
-function draw(times){
+function draw(n){
 
-for(let i=0;i<times;i++){
-
-if(balls.length==0) break
-
-let color=randomBall()
-
-stats[color]++
-
-animateBall(color)
-
-}
-
-updateStats()
-updateChart()
-
-sound()
-
-showPopup("สุ่ม "+times+" ครั้งเสร็จแล้ว")
-
-}
-
-function animateBall(color){
-
-let ball=document.getElementById("ball")
-
-ball.style.transform="scale(1.3) rotate(180deg)"
-ball.style.background=color
+let box=document.getElementById("box")
+box.classList.add("shake")
 
 setTimeout(()=>{
-ball.style.transform="scale(1)"
-},300)
+
+box.classList.remove("shake")
+
+for(let i=0;i<n;i++){
+
+if(balls.length==0)break
+
+let c=randomBall()
+stats[c]++
+
+}
+
+update()
+
+},600)
+
+}
+
+function update(){
+
+r.innerText=stats.red
+b.innerText=stats.blue
+g.innerText=stats.green
+y.innerText=stats.yellow
+
+chart.data.datasets[0].data=[stats.red,stats.blue,stats.green,stats.yellow]
+
+chart.update()
 
 }
 
 function toggleMode(){
 
-replaceMode=!replaceMode
+replace=!replace
 
-document.querySelector(".toggle").innerText=
-replaceMode?"โหมด: ใส่คืน":"โหมด: ไม่ใส่คืน"
+}
 
-if(replaceMode){
+function reset(){
+
+stats={red:0,blue:0,green:0,yellow:0}
 balls=[...baseBalls]
-}
-
-}
-
-function updateStats(){
-
-document.getElementById("red").innerText=stats.red
-document.getElementById("blue").innerText=stats.blue
-document.getElementById("green").innerText=stats.green
-document.getElementById("yellow").innerText=stats.yellow
-
-}
-
-function resetAll(){
-
-stats={
-red:0,
-blue:0,
-green:0,
-yellow:0
-}
-
-balls=[...baseBalls]
-
-updateStats()
-
-chart.data.datasets[0].data=[0,0,0,0]
-chart.update()
-
-}
-
-function showPopup(text){
-
-document.getElementById("popupText").innerText=text
-document.getElementById("popup").classList.add("active")
-
-}
-
-function closePopup(){
-
-document.getElementById("popup").classList.remove("active")
+update()
 
 }
 
@@ -340,43 +305,18 @@ let chart=new Chart(ctx,{
 type:"bar",
 
 data:{
-
 labels:["แดง","น้ำเงิน","เขียว","เหลือง"],
-
 datasets:[{
-
-label:"จำนวนที่สุ่มได้",
-
+label:"ผลลัพธ์จริง",
 data:[0,0,0,0]
-
-}]
-
 },
-
-options:{
-
-responsive:true,
-
-plugins:{
-legend:{display:false}
-}
-
+{
+label:"ค่าทฤษฎี",
+data:[40,30,20,10]
+}]
 }
 
 })
-
-function updateChart(){
-
-chart.data.datasets[0].data=[
-stats.red,
-stats.blue,
-stats.green,
-stats.yellow
-]
-
-chart.update()
-
-}
 
 </script>
 
