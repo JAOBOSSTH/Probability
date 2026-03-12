@@ -7,7 +7,7 @@
 
 <title>Coin Toss Probability Lab</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
@@ -20,14 +20,14 @@ font-family:'Prompt',sans-serif;
 }
 
 body{
-background:#fafafa;
-color:#333;
+background:linear-gradient(120deg,#fff,#fff0f0);
+min-height:100vh;
 }
 
 .container{
 max-width:1200px;
 margin:auto;
-padding:25px;
+padding:30px;
 }
 
 header{
@@ -36,192 +36,273 @@ margin-bottom:30px;
 }
 
 header h1{
-color:#d64545;
+font-size:2rem;
+color:#e63946;
+font-weight:700;
 }
 
 /* CARD */
 
 .card{
 background:white;
-border-radius:14px;
-padding:30px;
-margin-bottom:25px;
-box-shadow:0 10px 25px rgba(0,0,0,0.08);
+border-radius:16px;
+padding:35px;
+margin-bottom:30px;
+box-shadow:0 20px 40px rgba(0,0,0,0.08);
 }
 
-/* COIN 3D */
+/* COIN */
 
-.coin-scene{
-width:140px;
-height:140px;
-margin:auto;
+.coin-stage{
+height:180px;
+display:flex;
+align-items:center;
+justify-content:center;
 perspective:1000px;
 }
 
 .coin{
-width:100%;
-height:100%;
-position:relative;
-transform-style:preserve-3d;
-transition:transform 1s;
-}
 
-.coin-face{
-
-position:absolute;
-width:100%;
-height:100%;
-
+width:120px;
+height:120px;
 border-radius:50%;
+
+background:linear-gradient(145deg,#ffd700,#f5b700);
+
+border:6px solid #e0b200;
 
 display:flex;
 align-items:center;
 justify-content:center;
 
-font-size:42px;
-
-background:linear-gradient(145deg,#ffd700,#f5b700);
-border:6px solid #e0b200;
+font-size:40px;
 
 box-shadow:
-inset 0 0 10px rgba(255,255,255,0.8),
-0 10px 20px rgba(0,0,0,0.25);
+inset 0 0 10px rgba(255,255,255,0.9),
+0 12px 25px rgba(0,0,0,0.3);
 
-backface-visibility:hidden;
+transform-style:preserve-3d;
+
+transition:transform 1.2s cubic-bezier(.2,.8,.2,1);
 
 }
 
-.back{
-transform:rotateY(180deg);
+/* SHADOW */
+
+.shadow{
+
+width:90px;
+height:15px;
+
+background:rgba(0,0,0,0.25);
+
+border-radius:50%;
+
+margin:auto;
+
+filter:blur(4px);
+
+animation:shadowPulse 1s infinite alternate;
+
+}
+
+@keyframes shadowPulse{
+
+from{transform:scale(1)}
+to{transform:scale(.8)}
+
 }
 
 /* BUTTON */
 
 .buttons{
+
 display:flex;
 justify-content:center;
-gap:12px;
+gap:15px;
 flex-wrap:wrap;
+
 margin-top:20px;
+
 }
 
 button{
+
 border:none;
-background:#ff6b6b;
-color:white;
-padding:10px 18px;
-border-radius:8px;
+
+padding:12px 22px;
+
+font-size:15px;
+
+border-radius:10px;
+
 cursor:pointer;
+
+color:white;
+
+font-weight:600;
+
+background:linear-gradient(135deg,#ff6b6b,#e63946);
+
+box-shadow:0 6px 20px rgba(230,57,70,0.4);
+
 transition:.2s;
+
 }
 
 button:hover{
-background:#e63946;
-transform:translateY(-2px);
+
+transform:translateY(-3px);
+
+box-shadow:0 12px 25px rgba(230,57,70,0.5);
+
+}
+
+button:active{
+
+transform:scale(.95);
+
 }
 
 /* STATS */
 
 .stats{
+
 display:flex;
 justify-content:space-around;
-margin-top:25px;
+margin-top:30px;
 flex-wrap:wrap;
+
 }
 
 .stat{
+
 text-align:center;
+
 }
 
 .stat h3{
-color:#d64545;
-font-size:1.6rem;
+
+font-size:1.8rem;
+color:#e63946;
+
 }
 
 /* CHART */
 
-.chart-area{
-max-width:420px;
+.chart{
+
+max-width:400px;
 margin:auto;
-position:relative;
-}
-
-.no-data{
-position:absolute;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-color:#999;
-}
-
-/* FALLING COINS */
-
-.falling{
-position:fixed;
-top:-50px;
-font-size:26px;
-animation:fall linear forwards;
-}
-
-@keyframes fall{
-
-to{
-transform:translateY(110vh) rotate(720deg);
-opacity:0;
-}
 
 }
 
 /* POPUP */
 
 .popup{
+
 position:fixed;
 top:0;
 left:0;
 width:100%;
 height:100%;
+
 background:rgba(0,0,0,0.5);
+
 display:none;
+
 align-items:center;
 justify-content:center;
+
 }
 
 .popup-box{
+
 background:white;
-padding:30px;
-border-radius:12px;
+
+padding:40px;
+
+border-radius:16px;
+
 text-align:center;
+
+animation:pop .4s;
+
+}
+
+@keyframes pop{
+
+from{transform:scale(.6)}
+to{transform:scale(1)}
+
 }
 
 .popup-box h2{
+
 color:#e63946;
 margin-bottom:10px;
+
+}
+
+/* COIN RAIN */
+
+.coin-rain{
+
+position:fixed;
+
+top:-40px;
+
+font-size:26px;
+
+animation:fall linear forwards;
+
+}
+
+@keyframes fall{
+
+to{
+
+transform:translateY(110vh) rotate(720deg);
+opacity:0;
+
+}
+
 }
 
 /* KNOWLEDGE */
 
 .grid{
+
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:18px;
+gap:20px;
+
 }
 
 .knowledge{
-padding:18px;
-border-radius:10px;
+
 background:white;
-box-shadow:0 6px 15px rgba(0,0,0,0.08);
+padding:18px;
+
+border-radius:12px;
+
+box-shadow:0 8px 20px rgba(0,0,0,0.08);
+
 }
 
 .knowledge h4{
-color:#d64545;
+
+color:#e63946;
 margin-bottom:6px;
+
 }
 
 footer{
+
 text-align:center;
 margin-top:30px;
 color:#777;
+
 }
 
 </style>
@@ -232,111 +313,89 @@ color:#777;
 <div class="container">
 
 <header>
-<h1>Coin Toss Probability Lab</h1>
-<p>ทดลองโยนเหรียญเพื่อศึกษาความน่าจะเป็น</p>
-</header>
 
-<!-- SIMULATOR -->
+<h1>Coin Toss Probability Lab</h1>
+<p>ทดลองโยนเหรียญเพื่อเรียนรู้ความน่าจะเป็น</p>
+
+</header>
 
 <div class="card">
 
-<div class="coin-scene">
+<div class="coin-stage">
 
-<div id="coin" class="coin">
-
-<div class="coin-face">🦁</div>
-<div class="coin-face back">🌿</div>
+<div id="coin" class="coin">🦁</div>
 
 </div>
 
-</div>
+<div class="shadow"></div>
 
 <div class="buttons">
 
-<button onclick="tossCoin()">โยนเหรียญ</button>
-<button onclick="tossMultiple(100)">โยน 100 ครั้ง</button>
-<button onclick="tossMultiple(1000)">โยน 1000 ครั้ง</button>
-<button onclick="resetData()">รีเซ็ต</button>
+<button onclick="toss()">โยนเหรียญ</button>
+<button onclick="multi(100)">โยน 100 ครั้ง</button>
+<button onclick="multi(1000)">โยน 1000 ครั้ง</button>
+<button onclick="reset()">รีเซ็ต</button>
 
 </div>
 
 <div class="stats">
 
 <div class="stat">
-<h3 id="heads">0</h3>
+<h3 id="h">0</h3>
 <p>หัว</p>
 </div>
 
 <div class="stat">
-<h3 id="tails">0</h3>
+<h3 id="t">0</h3>
 <p>ก้อย</p>
 </div>
 
-<div class="stat">
-<h3 id="hp">0%</h3>
-<p>เปอร์เซ็นต์หัว</p>
-</div>
-
-<div class="stat">
-<h3 id="tp">0%</h3>
-<p>เปอร์เซ็นต์ก้อย</p>
 </div>
 
 </div>
-
-</div>
-
-<!-- CHART -->
 
 <div class="card">
-
-<div class="chart-area">
 
 <canvas id="chart"></canvas>
-<div id="nodata" class="no-data">ยังไม่มีข้อมูล</div>
 
 </div>
-
-</div>
-
-<!-- KNOWLEDGE -->
 
 <div class="card">
 
-<h2 style="margin-bottom:20px;color:#d64545;">ความรู้เกี่ยวกับ Probability</h2>
+<h2 style="margin-bottom:20px;color:#e63946;">ความรู้ Probability</h2>
 
 <div class="grid">
 
 <div class="knowledge"><h4>ความน่าจะเป็น</h4><p>การวัดโอกาสของเหตุการณ์</p></div>
-<div class="knowledge"><h4>Sample Space</h4><p>ผลลัพธ์ทั้งหมดที่เป็นไปได้</p></div>
+<div class="knowledge"><h4>Sample Space</h4><p>ผลลัพธ์ทั้งหมด</p></div>
 <div class="knowledge"><h4>Event</h4><p>เหตุการณ์ที่สนใจ</p></div>
-<div class="knowledge"><h4>Random Experiment</h4><p>การทดลองที่คาดเดาไม่ได้</p></div>
-<div class="knowledge"><h4>Theoretical Probability</h4><p>ค่าความน่าจะเป็นตามสูตร</p></div>
-<div class="knowledge"><h4>Experimental Probability</h4><p>ค่าจากการทดลองจริง</p></div>
-<div class="knowledge"><h4>Probability Range</h4><p>ค่าระหว่าง 0 ถึง 1</p></div>
+<div class="knowledge"><h4>Random Experiment</h4><p>การทดลองสุ่ม</p></div>
+<div class="knowledge"><h4>Theoretical</h4><p>ค่าทฤษฎี</p></div>
+<div class="knowledge"><h4>Experimental</h4><p>ค่าจากการทดลอง</p></div>
+<div class="knowledge"><h4>Range</h4><p>0 ถึง 1</p></div>
 <div class="knowledge"><h4>Addition Rule</h4><p>การรวมเหตุการณ์</p></div>
 <div class="knowledge"><h4>Multiplication Rule</h4><p>เหตุการณ์ต่อเนื่อง</p></div>
-<div class="knowledge"><h4>Law of Large Numbers</h4><p>ทดลองมากจะเข้าใกล้ค่าทฤษฎี</p></div>
+<div class="knowledge"><h4>Law of Large Numbers</h4><p>ทดลองมากจะเข้าใกล้ทฤษฎี</p></div>
 
 </div>
 
 </div>
 
 <footer>
+
 Probability Learning Web App
+
 </footer>
 
 </div>
-
-<!-- POPUP -->
 
 <div id="popup" class="popup">
 
 <div class="popup-box">
 
-<h2 id="resultText"></h2>
+<h2 id="result"></h2>
 
-<button onclick="closePopup()">ปิด</button>
+<button onclick="closePop()">ปิด</button>
 
 </div>
 
@@ -351,89 +410,78 @@ const coin=document.getElementById("coin")
 
 /* SOUND */
 
-const spinSound=new Audio("https://actions.google.com/sounds/v1/coins/coin_spin.ogg")
-const dropSound=new Audio("https://actions.google.com/sounds/v1/coins/coin_drop.ogg")
+const spin=new Audio("https://actions.google.com/sounds/v1/coins/coin_spin.ogg")
+const drop=new Audio("https://actions.google.com/sounds/v1/coins/coin_drop.ogg")
 
 /* CHART */
 
 const chart=new Chart(document.getElementById("chart"),{
 
-type:'pie',
+type:"pie",
 
 data:{
 labels:["หัว","ก้อย"],
 datasets:[{
-data:[1,1],
-backgroundColor:["#ddd","#ddd"]
+
+data:[0,0],
+
+backgroundColor:["#ff6b6b","#ffd6d6"]
+
 }]
+
 }
 
 })
 
 function update(){
 
-let total=heads+tails
+document.getElementById("h").textContent=heads
+document.getElementById("t").textContent=tails
 
-if(total===0){
-
-document.getElementById("nodata").style.display="block"
-
-chart.data.datasets[0].backgroundColor=["#ddd","#ddd"]
-chart.data.datasets[0].data=[1,1]
-
-}else{
-
-document.getElementById("nodata").style.display="none"
-
-chart.data.datasets[0].backgroundColor=["#ff6b6b","#ffd6d6"]
 chart.data.datasets[0].data=[heads,tails]
-
-}
-
-let hp=total?((heads/total)*100).toFixed(1):0
-let tp=total?((tails/total)*100).toFixed(1):0
-
-document.getElementById("heads").textContent=heads
-document.getElementById("tails").textContent=tails
-document.getElementById("hp").textContent=hp+"%"
-document.getElementById("tp").textContent=tp+"%"
-
 chart.update()
 
 }
 
-/* COIN TOSS */
+/* SINGLE */
 
-function tossCoin(){
+function toss(){
 
-spinSound.play()
+spin.play()
 
 let result=Math.random()<0.5?"หัว":"ก้อย"
 
-coin.style.transform=result==="หัว"?
-"rotateY(720deg)":
-"rotateY(900deg)"
+coin.style.transform="rotateY("+(Math.random()*2000)+"deg)"
 
 setTimeout(()=>{
 
-if(result==="หัว") heads++
-else tails++
+if(result==="หัว"){
 
-dropSound.play()
+coin.innerHTML="🦁"
+heads++
+
+}else{
+
+coin.innerHTML="🌿"
+tails++
+
+}
+
+drop.play()
 
 update()
 
-showResult("ผลลัพธ์: "+result)
+show("ผลลัพธ์: "+result)
 
-},900)
+},1200)
 
 }
 
 /* MULTI */
 
-function tossMultiple(n){
+function multi(n){
 
-fallingCoins(n)
+coinRain()
 
 let h=0
 let t=0
@@ -449,17 +497,19 @@ tails+=t
 
 update()
 
-showResult("สุ่ม "+n+" ครั้ง<br>หัว "+h+" | ก้อย "+t)
+show("สุ่ม "+n+" ครั้ง<br>หัว "+h+" | ก้อย "+t)
 
 }
 
-function fallingCoins(n){
+/* COIN RAIN */
 
-for(let i=0;i<Math.min(n,40);i++){
+function coinRain(){
+
+for(let i=0;i<35;i++){
 
 let c=document.createElement("div")
 
-c.className="falling"
+c.className="coin-rain"
 c.innerHTML="🪙"
 
 c.style.left=Math.random()*100+"vw"
@@ -475,23 +525,24 @@ setTimeout(()=>c.remove(),4000)
 
 /* POPUP */
 
-function showResult(text){
+function show(text){
 
-document.getElementById("resultText").innerHTML=text
+document.getElementById("result").innerHTML=text
 document.getElementById("popup").style.display="flex"
 
 }
 
-function closePopup(){
+function closePop(){
 
 document.getElementById("popup").style.display="none"
 
 }
 
-function resetData(){
+function reset(){
 
 heads=0
 tails=0
+
 update()
 
 }
