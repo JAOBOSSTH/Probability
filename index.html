@@ -20,13 +20,18 @@ font-family:'Prompt',sans-serif;
 }
 
 body{
-background:#fafafa;
-color:#333;
+background:linear-gradient(120deg,#fff,#fff5f5);
+min-height:100vh;
+animation:bgmove 10s infinite alternate;
+}
+
+@keyframes bgmove{
+from{background-position:left}
+to{background-position:right}
 }
 
 .container{
-width:100%;
-max-width:1400px;
+max-width:1200px;
 margin:auto;
 padding:25px;
 }
@@ -41,44 +46,69 @@ color:#d64545;
 font-size:2rem;
 }
 
-/* FULL CARD */
+/* CARD */
 
 .card{
 background:white;
 border-radius:16px;
 padding:30px;
 margin-bottom:25px;
-box-shadow:0 10px 25px rgba(0,0,0,0.08);
-width:100%;
+box-shadow:0 15px 30px rgba(0,0,0,0.08);
+transition:.3s;
+}
+
+.card:hover{
+transform:translateY(-3px);
 }
 
 /* COIN 3D */
 
-.coin-container{
-display:flex;
-justify-content:center;
-margin:30px 0;
-perspective:1200px;
+.coin-scene{
+width:140px;
+height:140px;
+margin:auto;
+perspective:1000px;
 }
 
 .coin{
-width:120px;
-height:120px;
+width:100%;
+height:100%;
+position:relative;
+transform-style:preserve-3d;
+transition:transform 1.2s;
+}
+
+.coin.spin{
+transform:rotateY(1440deg);
+}
+
+.coin-face{
+
+position:absolute;
+width:100%;
+height:100%;
 border-radius:50%;
-background:linear-gradient(145deg,#ffd700,#f5b700);
+
 display:flex;
 align-items:center;
 justify-content:center;
+
 font-size:40px;
+font-weight:600;
+
+backface-visibility:hidden;
+
+background:linear-gradient(145deg,#ffd700,#f5b700);
+border:6px solid #e0b200;
+
 box-shadow:
 inset 0 0 10px rgba(255,255,255,0.8),
-0 10px 25px rgba(0,0,0,0.2);
-transition:transform 1s;
-border:5px solid #e0b200;
+0 10px 20px rgba(0,0,0,0.25);
+
 }
 
-.coin.flip{
-transform:rotateY(1080deg);
+.coin-face.back{
+transform:rotateY(180deg);
 }
 
 /* BUTTON */
@@ -86,8 +116,9 @@ transform:rotateY(1080deg);
 .buttons{
 display:flex;
 justify-content:center;
-gap:10px;
+gap:12px;
 flex-wrap:wrap;
+margin-top:20px;
 }
 
 button{
@@ -98,11 +129,14 @@ padding:10px 18px;
 border-radius:8px;
 cursor:pointer;
 transition:.2s;
+font-weight:500;
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
 }
 
 button:hover{
 background:#e63946;
 transform:translateY(-2px);
+box-shadow:0 10px 20px rgba(0,0,0,0.2);
 }
 
 button:active{
@@ -124,13 +158,13 @@ text-align:center;
 
 .stat h3{
 color:#d64545;
-font-size:1.6rem;
+font-size:1.7rem;
 }
 
 /* CHART */
 
 .chart-area{
-max-width:400px;
+max-width:420px;
 margin:auto;
 position:relative;
 }
@@ -141,7 +175,22 @@ top:50%;
 left:50%;
 transform:translate(-50%,-50%);
 color:#999;
-font-size:14px;
+}
+
+/* FALLING COINS */
+
+.falling{
+position:fixed;
+top:-50px;
+font-size:28px;
+animation:fall linear forwards;
+}
+
+@keyframes fall{
+to{
+transform:translateY(110vh) rotate(720deg);
+opacity:0;
+}
 }
 
 /* POPUP */
@@ -161,7 +210,7 @@ z-index:100;
 
 .popup-box{
 background:white;
-padding:30px;
+padding:35px;
 border-radius:14px;
 text-align:center;
 animation:pop .4s;
@@ -177,29 +226,11 @@ color:#e63946;
 margin-bottom:10px;
 }
 
-/* FALLING COINS */
-
-.falling{
-position:fixed;
-top:-50px;
-font-size:26px;
-animation:fall linear forwards;
-}
-
-@keyframes fall{
-
-to{
-transform:translateY(110vh) rotate(720deg);
-opacity:0;
-}
-
-}
-
 /* KNOWLEDGE */
 
 .grid{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
 gap:18px;
 }
 
@@ -230,15 +261,20 @@ color:#777;
 
 <header>
 <h1>Coin Toss Probability Lab</h1>
-<p>ทดลองสุ่มเหรียญเพื่อศึกษาความน่าจะเป็น</p>
+<p>ทดลองโยนเหรียญเพื่อเรียนรู้ความน่าจะเป็น</p>
 </header>
-
-<!-- SIMULATOR -->
 
 <div class="card">
 
-<div class="coin-container">
-<div id="coin" class="coin">🪙</div>
+<div class="coin-scene">
+
+<div id="coin" class="coin">
+
+<div class="coin-face">🦁</div>
+<div class="coin-face back">🌿</div>
+
+</div>
+
 </div>
 
 <div class="buttons">
@@ -276,8 +312,6 @@ color:#777;
 
 </div>
 
-<!-- CHART -->
-
 <div class="card">
 
 <div class="chart-area">
@@ -289,36 +323,11 @@ color:#777;
 
 </div>
 
-<!-- KNOWLEDGE -->
-
-<div class="card">
-
-<h2 style="margin-bottom:20px;color:#d64545;">ความรู้เกี่ยวกับ Probability</h2>
-
-<div class="grid">
-
-<div class="knowledge"><h4>ความน่าจะเป็น</h4><p>การวัดโอกาสของเหตุการณ์</p></div>
-<div class="knowledge"><h4>Sample Space</h4><p>ผลลัพธ์ทั้งหมดที่เป็นไปได้</p></div>
-<div class="knowledge"><h4>Event</h4><p>เหตุการณ์ที่สนใจ</p></div>
-<div class="knowledge"><h4>Random Experiment</h4><p>การทดลองที่คาดเดาไม่ได้</p></div>
-<div class="knowledge"><h4>Theoretical</h4><p>ค่าตามทฤษฎี</p></div>
-<div class="knowledge"><h4>Experimental</h4><p>ค่าจากการทดลอง</p></div>
-<div class="knowledge"><h4>Range</h4><p>ค่าระหว่าง 0 ถึง 1</p></div>
-<div class="knowledge"><h4>Addition Rule</h4><p>การรวมเหตุการณ์</p></div>
-<div class="knowledge"><h4>Multiplication Rule</h4><p>เหตุการณ์ต่อเนื่อง</p></div>
-<div class="knowledge"><h4>Law of Large Numbers</h4><p>ทดลองมากจะเข้าใกล้ค่าทฤษฎี</p></div>
-
-</div>
-
-</div>
-
 <footer>
 Probability Learning Web App
 </footer>
 
 </div>
-
-<!-- POPUP -->
 
 <div id="popup" class="popup">
 
@@ -341,12 +350,8 @@ const coin=document.getElementById("coin")
 
 /* SOUND */
 
-function playSound(){
-
-let audio=new Audio("https://actions.google.com/sounds/v1/coins/coin_flip.ogg")
-audio.play()
-
-}
+const spinSound=new Audio("https://actions.google.com/sounds/v1/coins/coin_spin.ogg")
+const coinSound=new Audio("https://actions.google.com/sounds/v1/coins/coin_drop.ogg")
 
 /* CHART */
 
@@ -360,15 +365,9 @@ datasets:[{
 data:[1,1],
 backgroundColor:["#ddd","#ddd"]
 }]
-},
-
-options:{
-plugins:{legend:{position:"bottom"}}
 }
 
 })
-
-/* UPDATE */
 
 function update(){
 
@@ -377,14 +376,12 @@ let total=heads+tails
 if(total===0){
 
 document.getElementById("nodata").style.display="block"
-
 chart.data.datasets[0].backgroundColor=["#ddd","#ddd"]
 chart.data.datasets[0].data=[1,1]
 
 }else{
 
 document.getElementById("nodata").style.display="none"
-
 chart.data.datasets[0].backgroundColor=["#ff6b6b","#ffd6d6"]
 chart.data.datasets[0].data=[heads,tails]
 
@@ -402,7 +399,7 @@ chart.update()
 
 }
 
-/* COIN FALL */
+/* FALLING COINS */
 
 function fallingCoins(n){
 
@@ -423,29 +420,30 @@ setTimeout(()=>c.remove(),4000)
 
 }
 
-/* TOSS */
+/* COIN TOSS */
 
 function tossCoin(){
 
-playSound()
+spinSound.play()
 
-coin.classList.add("flip")
+coin.classList.add("spin")
 
 setTimeout(()=>{
 
-if(Math.random()<0.5){
-heads++
-showResult("ผลลัพธ์: หัว 🪙")
-}else{
-tails++
-showResult("ผลลัพธ์: ก้อย 🪙")
-}
+let result=Math.random()<0.5?"หัว":"ก้อย"
+
+if(result==="หัว") heads++
+else tails++
+
+coinSound.play()
 
 update()
 
-coin.classList.remove("flip")
+showResult("ผลลัพธ์: "+result)
 
-},900)
+coin.classList.remove("spin")
+
+},1200)
 
 }
 
@@ -453,7 +451,7 @@ coin.classList.remove("flip")
 
 function tossMultiple(n){
 
-playSound()
+spinSound.play()
 
 fallingCoins(n)
 
@@ -471,7 +469,12 @@ tails+=t
 
 update()
 
+setTimeout(()=>{
+
+coinSound.play()
 showResult("สุ่ม "+n+" ครั้ง<br>หัว "+h+" | ก้อย "+t)
+
+},1500)
 
 }
 
@@ -489,8 +492,6 @@ function closePopup(){
 document.getElementById("popup").style.display="none"
 
 }
-
-/* RESET */
 
 function resetData(){
 
