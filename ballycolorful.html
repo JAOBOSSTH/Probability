@@ -2,54 +2,154 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Ball Probability Simulator</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 
-body{
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
 font-family:'Prompt',sans-serif;
-background:linear-gradient(135deg,#667eea,#764ba2);
+}
+
+body{
+background:linear-gradient(135deg,#1f2937,#111827);
+color:white;
 display:flex;
 justify-content:center;
 align-items:center;
-height:100vh;
-color:white;
+min-height:100vh;
 }
 
-.container{
-background:rgba(0,0,0,0.35);
-padding:30px;
+.app{
+
+width:900px;
+background:#1f2937;
 border-radius:20px;
-width:420px;
+padding:30px;
+box-shadow:0 20px 40px rgba(0,0,0,0.5);
+
+}
+
+h1{
 text-align:center;
-box-shadow:0 10px 25px rgba(0,0,0,0.4);
+margin-bottom:20px;
+}
+
+.controls{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+justify-content:center;
+margin-bottom:20px;
 }
 
 button{
-margin-top:15px;
+
 padding:10px 18px;
 border:none;
 border-radius:10px;
-font-size:16px;
 cursor:pointer;
-background:white;
-color:#333;
-font-weight:600;
+background:#3b82f6;
+color:white;
+font-weight:500;
+transition:.2s;
+
+}
+
+button:hover{
+transform:scale(1.05);
+}
+
+.reset{
+background:#ef4444;
+}
+
+.toggle{
+background:#10b981;
+}
+
+.ball-area{
+
+display:flex;
+justify-content:center;
+align-items:center;
+height:120px;
+margin-bottom:20px;
+
 }
 
 .ball{
+
 width:80px;
 height:80px;
 border-radius:50%;
-margin:20px auto;
+background:gray;
+transition:.4s;
+box-shadow:0 5px 15px rgba(0,0,0,0.5);
+
 }
 
 .stats{
+
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:10px;
 margin-top:20px;
-font-size:14px;
-line-height:1.6;
+
+}
+
+.card{
+
+background:#111827;
+padding:10px;
+border-radius:10px;
+text-align:center;
+
+}
+
+canvas{
+margin-top:20px;
+background:white;
+border-radius:10px;
+padding:10px;
+}
+
+.popup{
+
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.6);
+display:flex;
+justify-content:center;
+align-items:center;
+opacity:0;
+pointer-events:none;
+transition:.3s;
+
+}
+
+.popup.active{
+opacity:1;
+pointer-events:auto;
+}
+
+.popup-box{
+
+background:#111827;
+padding:30px;
+border-radius:15px;
+text-align:center;
+
 }
 
 </style>
@@ -57,29 +157,65 @@ line-height:1.6;
 
 <body>
 
-<div class="container">
+<div class="app">
 
-<h2>🎱 Ball Probability Simulator</h2>
-<p>จำลองการหยิบลูกบอลจากกล่อง</p>
+<h1>🎱 Ball Probability Simulator</h1>
 
-<div id="ball" class="ball" style="background:gray"></div>
+<div class="controls">
 
-<button onclick="drawBall()">สุ่มหยิบลูกบอล</button>
+<button onclick="draw(1)">สุ่ม 1</button>
+<button onclick="draw(200)">สุ่ม 200</button>
+<button onclick="draw(5000)">สุ่ม 5000</button>
 
-<div id="result"></div>
+<button class="toggle" onclick="toggleMode()">โหมด: ใส่คืน</button>
 
-<div class="stats" id="stats"></div>
+<button class="reset" onclick="resetAll()">รีเซ็ต</button>
+
+</div>
+
+<div class="ball-area">
+
+<div id="ball" class="ball"></div>
+
+</div>
+
+<div class="stats">
+
+<div class="card">🔴 แดง <br><span id="red">0</span></div>
+<div class="card">🔵 น้ำเงิน <br><span id="blue">0</span></div>
+<div class="card">🟢 เขียว <br><span id="green">0</span></div>
+<div class="card">🟡 เหลือง <br><span id="yellow">0</span></div>
+
+</div>
+
+<canvas id="chart"></canvas>
+
+</div>
+
+<div id="popup" class="popup">
+
+<div class="popup-box">
+
+<h2 id="popupText"></h2>
+<br>
+<button onclick="closePopup()">ปิด</button>
+
+</div>
 
 </div>
 
 <script>
 
-let balls=[
+let baseBalls=[
 "red","red","red","red",
 "blue","blue","blue",
 "green","green",
 "yellow"
 ]
+
+let balls=[...baseBalls]
+
+let replaceMode=true
 
 let stats={
 red:0,
@@ -88,29 +224,157 @@ green:0,
 yellow:0
 }
 
-function drawBall(){
+function sound(){
 
-let randomIndex=Math.floor(Math.random()*balls.length)
+let audio=new Audio("https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3")
+audio.play()
 
-let color=balls[randomIndex]
+}
+
+function randomBall(){
+
+let index=Math.floor(Math.random()*balls.length)
+let color=balls[index]
+
+if(!replaceMode){
+balls.splice(index,1)
+}
+
+return color
+
+}
+
+function draw(times){
+
+for(let i=0;i<times;i++){
+
+if(balls.length==0) break
+
+let color=randomBall()
 
 stats[color]++
 
+animateBall(color)
+
+}
+
+updateStats()
+updateChart()
+
+sound()
+
+showPopup("สุ่ม "+times+" ครั้งเสร็จแล้ว")
+
+}
+
+function animateBall(color){
+
 let ball=document.getElementById("ball")
 
+ball.style.transform="scale(1.3) rotate(180deg)"
 ball.style.background=color
 
-document.getElementById("result").innerHTML=
-"คุณหยิบได้ลูกบอลสี <b>"+color+"</b>"
+setTimeout(()=>{
+ball.style.transform="scale(1)"
+},300)
 
-document.getElementById("stats").innerHTML=
-`
-📊 สถิติการหยิบ<br>
-แดง: ${stats.red}<br>
-น้ำเงิน: ${stats.blue}<br>
-เขียว: ${stats.green}<br>
-เหลือง: ${stats.yellow}
-`
+}
+
+function toggleMode(){
+
+replaceMode=!replaceMode
+
+document.querySelector(".toggle").innerText=
+replaceMode?"โหมด: ใส่คืน":"โหมด: ไม่ใส่คืน"
+
+if(replaceMode){
+balls=[...baseBalls]
+}
+
+}
+
+function updateStats(){
+
+document.getElementById("red").innerText=stats.red
+document.getElementById("blue").innerText=stats.blue
+document.getElementById("green").innerText=stats.green
+document.getElementById("yellow").innerText=stats.yellow
+
+}
+
+function resetAll(){
+
+stats={
+red:0,
+blue:0,
+green:0,
+yellow:0
+}
+
+balls=[...baseBalls]
+
+updateStats()
+
+chart.data.datasets[0].data=[0,0,0,0]
+chart.update()
+
+}
+
+function showPopup(text){
+
+document.getElementById("popupText").innerText=text
+document.getElementById("popup").classList.add("active")
+
+}
+
+function closePopup(){
+
+document.getElementById("popup").classList.remove("active")
+
+}
+
+let ctx=document.getElementById("chart")
+
+let chart=new Chart(ctx,{
+
+type:"bar",
+
+data:{
+
+labels:["แดง","น้ำเงิน","เขียว","เหลือง"],
+
+datasets:[{
+
+label:"จำนวนที่สุ่มได้",
+
+data:[0,0,0,0]
+
+}]
+
+},
+
+options:{
+
+responsive:true,
+
+plugins:{
+legend:{display:false}
+}
+
+}
+
+})
+
+function updateChart(){
+
+chart.data.datasets[0].data=[
+stats.red,
+stats.blue,
+stats.green,
+stats.yellow
+]
+
+chart.update()
 
 }
 
