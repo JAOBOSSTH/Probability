@@ -1,225 +1,495 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Coin Toss Probability Lab</title>
+
+<title>โยนเหรียญหัวก้อย</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600&display=swap" rel="stylesheet">
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 
 <style>
-/* คง CSS เดิมของคุณไว้ทั้งหมด */
-*{box-sizing:border-box;margin:0;padding:0;font-family:'Prompt',sans-serif;}
-body{background:linear-gradient(120deg,#fff7f7,#ffecec);min-height:100vh;overflow-x:hidden;}
-.container{max-width:1100px;margin:auto;padding:20px;}
-header{text-align:center;margin-bottom:25px;}
-header h1{color:#e63946;font-size:2rem;}
-.card{background:white;border-radius:16px;padding:25px;margin-bottom:20px;box-shadow:0 12px 30px rgba(0,0,0,0.08);text-align:center;}
-.coin-stage{display:flex;justify-content:center;align-items:center;height:180px;perspective:800px;}
-.coin{width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,#ffd700,#d9a400);border:6px solid #c48b00;display:flex;align-items:center;justify-content:center;font-size:48px;box-shadow:inset 0 0 10px rgba(255,255,255,0.9),0 10px 20px rgba(0,0,0,0.2);transition:transform 1.2s;}
-.buttons{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:15px;}
-button{padding:10px 18px;border:none;border-radius:10px;font-weight:600;color:white;background:linear-gradient(135deg,#ff6b6b,#e63946);cursor:pointer;transition:.2s;}
-button:hover{transform:translateY(-2px);}
-.stats{display:flex;justify-content:space-around;margin-top:20px;}
-.stat h3{color:#e63946;font-size:1.8rem;}
-.chart-wrap{display:flex;justify-content:center;margin-top:10px;}
-.chart-box{width:420px;height:420px;max-width:90vw;}
-.chart-box canvas{width:100%!important;height:100%!important;}
-.knowledge-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin-top:10px;}
-.knowledge{background:white;padding:14px;border-radius:10px;box-shadow:0 6px 16px rgba(0,0,0,0.08);}
-.knowledge h4{color:#e63946;margin-bottom:5px;}
-.ball{position:fixed;top:-20px;width:8px;height:8px;border-radius:50%;animation:fall linear forwards;}
-@keyframes fall{to{transform:translateY(110vh);opacity:0;}}
-.confetti{position:fixed;top:-20px;width:10px;height:10px;animation:fall linear forwards;}
-.popup{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;}
-.popup-box{background:white;padding:35px;border-radius:14px;text-align:center;}
-.popup-box h2{color:#e63946;margin-bottom:12px;}
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+font-family:'Prompt',sans-serif;
+}
+
+body{
+background:linear-gradient(120deg,#fff7f7,#ffecec);
+min-height:100vh;
+overflow-x:hidden;
+}
+
+.container{
+max-width:1100px;
+margin:auto;
+padding:20px;
+}
+
+header{
+text-align:center;
+margin-bottom:25px;
+}
+
+header h1{
+color:#e63946;
+font-size:2rem;
+}
+
+/* CARD */
+
+.card{
+background:white;
+border-radius:16px;
+padding:25px;
+margin-bottom:20px;
+box-shadow:0 12px 30px rgba(0,0,0,0.08);
+text-align:center;
+}
+
+/* COIN */
+
+.coin-stage{
+display:flex;
+justify-content:center;
+align-items:center;
+height:180px;
+perspective:800px;
+}
+
+.coin{
+width:120px;
+height:120px;
+border-radius:50%;
+background:radial-gradient(circle,#ffd700,#d9a400);
+border:6px solid #c48b00;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:48px;
+box-shadow:
+inset 0 0 10px rgba(255,255,255,0.9),
+0 10px 20px rgba(0,0,0,0.2);
+transition:transform 1.2s;
+}
+
+/* BUTTON */
+
+.buttons{
+display:flex;
+justify-content:center;
+flex-wrap:wrap;
+gap:10px;
+margin-top:15px;
+}
+
+button{
+padding:10px 18px;
+border:none;
+border-radius:10px;
+font-weight:600;
+color:white;
+background:linear-gradient(135deg,#ff6b6b,#e63946);
+cursor:pointer;
+transition:.2s;
+}
+
+button:hover{
+transform:translateY(-2px);
+}
+
+/* STATS */
+
+.stats{
+display:flex;
+justify-content:space-around;
+margin-top:20px;
+}
+
+.stat h3{
+color:#e63946;
+font-size:1.8rem;
+}
+
+/* CHART */
+
+.chart-wrap{
+display:flex;
+justify-content:center;
+margin-top:10px;
+}
+
+.chart-box{
+width:420px;
+height:420px;
+max-width:90vw;
+}
+
+.chart-box canvas{
+width:100%!important;
+height:100%!important;
+}
+
+/* KNOWLEDGE */
+
+.knowledge-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:15px;
+margin-top:10px;
+}
+
+.knowledge{
+background:white;
+padding:14px;
+border-radius:10px;
+box-shadow:0 6px 16px rgba(0,0,0,0.08);
+}
+
+.knowledge h4{
+color:#e63946;
+margin-bottom:5px;
+}
+
+/* FLOAT BALL */
+
+.ball{
+position:fixed;
+top:-20px;
+width:8px;
+height:8px;
+border-radius:50%;
+animation:fall linear forwards;
+}
+
+@keyframes fall{
+to{
+transform:translateY(110vh);
+opacity:0;
+}
+}
+
+/* CONFETTI */
+
+.confetti{
+position:fixed;
+top:-20px;
+width:10px;
+height:10px;
+animation:fall linear forwards;
+}
+
+/* POPUP */
+
+.popup{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.45);
+display:none;
+align-items:center;
+justify-content:center;
+}
+
+.popup-box{
+background:white;
+padding:35px;
+border-radius:14px;
+text-align:center;
+}
+
+.popup-box h2{
+color:#e63946;
+margin-bottom:12px;
+}
+
 </style>
 </head>
 
 <body>
 
 <div class="container">
-    <header>
-        <h1>Coin Toss Probability Lab</h1>
-        <p>ทดลองโยนเหรียญเพื่อศึกษาความน่าจะเป็น</p>
-    </header>
 
-    <div class="card">
-        <div class="coin-stage">
-            <div id="coin" class="coin">🦁</div>
-        </div>
-        <div class="buttons">
-            <button onclick="toss()">โยนเหรียญ</button>
-            <button onclick="multi(100)">สุ่ม 100</button>
-            <button onclick="multi(1000)">สุ่ม 1000</button>
-            <button onclick="reset()">รีเซ็ต</button>
-        </div>
-        <div class="stats">
-            <div class="stat"><h3 id="h">0</h3><p>หัว</p></div>
-            <div class="stat"><h3 id="t">0</h3><p>ก้อย</p></div>
-        </div>
-    </div>
+<header>
+<h1>Coin Probability</h1>
+<p>เว็บทดลองการโยนเหรียญเพื่อศึกษาความน่าจะเป็น</p>
+</header>
 
-    <div class="card">
-        <div class="chart-wrap">
-            <div class="chart-box"><canvas id="chart"></canvas></div>
-        </div>
-    </div>
+<div class="card">
 
-    <div class="card">
-        <h2 style="color:#e63946;margin-bottom:10px;">ความรู้เกี่ยวกับการโยนเหรียญ</h2>
-        <div class="knowledge-grid">
-            <div class="knowledge"><h4>ผลลัพธ์</h4><p>การโยนเหรียญมีผลลัพธ์ 2 แบบ คือ หัว และ ก้อย</p></div>
-            <div class="knowledge"><h4>ความน่าจะเป็น</h4><p>เหรียญปกติมีโอกาสออกแต่ละด้าน 50%</p></div>
-            <div class="knowledge"><h4>Sample Space</h4><p>เซตของผลลัพธ์คือ {หัว, ก้อย}</p></div>
-            <div class="knowledge"><h4>Random</h4><p>การโยนเหรียญเป็นการทดลองแบบสุ่ม</p></div>
-            <div class="knowledge"><h4>Independent</h4><p>ผลแต่ละครั้งไม่เกี่ยวกัน</p></div>
-            <div class="knowledge"><h4>Large Numbers</h4><p>ทดลองมากผลจะเข้าใกล้ 50%</p></div>
-            <div class="knowledge"><h4>Range</h4><p>Probability อยู่ระหว่าง 0 ถึง 1</p></div>
-            <div class="knowledge"><h4>Experimental</h4><p>ค่าที่ได้จากการทดลองจริง</p></div>
-            <div class="knowledge"><h4>Theoretical</h4><p>ค่าที่คำนวณจากสูตร</p></div>
-            <div class="knowledge"><h4>Fair Coin</h4><p>เหรียญที่โอกาสทั้งสองด้านเท่ากัน</p></div>
-        </div>
-    </div>
+<div class="coin-stage">
+<div id="coin" class="coin">🦁</div>
+</div>
+
+<div class="buttons">
+<button onclick="toss()">โยน 1 ครั้ง</button>
+<button onclick="multi(100)">โยน 100 ครั้ง</button>
+<button onclick="multi(1000)">โยน 1000 ครั้ง</button>
+<button onclick="reset()">รีเซ็ตข้อมูล</button>
+</div>
+
+<div class="stats">
+
+<div class="stat">
+<h3 id="h">0</h3>
+<p>จำนวนออกหัว</p>
+</div>
+
+<div class="stat">
+<h3 id="t">0</h3>
+<p>จำนวนออกก้อย</p>
+</div>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<div class="chart-wrap">
+<div class="chart-box">
+<canvas id="chart"></canvas>
+</div>
+</div>
+
+</div>
+
+<div class="card">
+
+<h2 style="color:#e63946;margin-bottom:10px;">ความรู้เกี่ยวกับความน่าจะเป็นในการโยนเหรียญ</h2>
+
+<div class="knowledge-grid">
+
+<div class="knowledge"><h4>รูปแบบ</h4><p>การโยนเหรียญมีผล 2 แบบคือ หัว และ ก้อย</p></div>
+<div class="knowledge"><h4>ความน่าจะเป็น</h4><p>เหรียญปกติมีโอกาสออกแต่ละด้าน 50%</p></div>
+<div class="knowledge"><h4>Sample Space</h4><p>เซตของผลลัพธ์คือ {หัว, ก้อย}</p></div>
+<div class="knowledge"><h4>Random</h4><p>การโยนเหรียญเป็นการทดลองแบบสุ่ม ไม่สามารถรู้ผลล่วงหน้า</p></div>
+<div class="knowledge"><h4>จำนวนการโยน</h4><p>ทดลองโยนจำนวนหลายครั้งผลจะเข้าใกล้ 50%</p></div>
+<div class="knowledge"><h4>เหตุการณ์อิสระ</h4><p>การโยนเหรียญแต่ละครั้งไม่เกี่ยวกัน</p></div>
+<div class="knowledge"><h4>การโยนแต่ละครั้ง</h4><p>หากโยนสูงไป เหรียญอาจจะหายได้ แต่ในเว็บเหรียญไม่หายนะคะ</p></div>
+<div class="knowledge"><h4>ผลที่ได้จากการโยน</h4><p>มีโอกาสน้อยมากที่จะโยนแล้วผลออกซ้ำติดต่อกันหลายครั้ง</p></div>
+
+</div>
+
+</div>
+
 </div>
 
 <div class="popup" id="popup">
-    <div class="popup-box">
-        <h2 id="result"></h2>
-        <button onclick="closePop()">ปิด</button>
-    </div>
+<div class="popup-box">
+<h2 id="result"></h2>
+<button onclick="closePop()">ปิดหน้านี้</button>
+</div>
 </div>
 
 <script>
-let heads = 0;
-let tails = 0;
-const coin = document.getElementById("coin");
 
-/* --- แก้ไขส่วน SOUND --- */
-// ใช้ไฟล์เสียงที่เสถียรกว่าจาก SoundJay
-const spinSound = new Audio("https://www.soundjay.com/misc/sounds/coin-spins-1.mp3");
-const winSound = new Audio("https://www.soundjay.com/buttons/sounds/button-37a.mp3");
+let heads=0
+let tails=0
 
-// ฟังก์ชันช่วยเล่นเสียง เพื่อแก้ปัญหา Browser Block
-function playSound(audio) {
-    audio.pause();
-    audio.currentTime = 0;
-    // .play() คืนค่าเป็น Promise ต้องจัดการเผื่อโดนบล็อก
-    audio.play().catch(e => console.log("Audio play blocked until user clicks"));
+const coin=document.getElementById("coin")
+
+/* SOUND */
+
+const spin = new Audio("https://assets.mixkit.co/active_storage/sfx/212/212-preview.mp3")
+const win = new Audio("https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3")
+
+spin.volume = 0.8
+win.volume = 0.9
+
+spin.preload = "auto"
+win.preload = "auto"
+
+function playSpin(){
+spin.currentTime = 0
+spin.play().catch(()=>{})
 }
 
-/* CHART */
-const chart = new Chart(document.getElementById("chart"), {
-    type: "pie",
-    plugins: [ChartDataLabels],
-    data: {
-        labels: ["หัว", "ก้อย"],
-        datasets: [{
-            data: [0, 0],
-            backgroundColor: ["#ff6b6b", "#ffd6d6"]
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            datalabels: {
-                color: "#fff",
-                font: { weight: "bold", size: 18 },
-                formatter: (v, ctx) => {
-                    let total = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
-                    if (total === 0) return "0%";
-                    return Math.round(v / total * 100) + "%";
-                }
-            }
-        }
-    }
-});
+function playWin(){
 
-function update() {
-    document.getElementById("h").textContent = heads;
-    document.getElementById("t").textContent = tails;
-    chart.data.datasets[0].data = [heads, tails];
-    chart.update();
+spin.pause()
+spin.currentTime = 0
+
+win.currentTime = 0
+win.play().catch(()=>{})
+
+}
+    
+/* CHART */
+
+const chart=new Chart(document.getElementById("chart"),{
+
+type:"pie",
+
+plugins:[ChartDataLabels],
+
+data:{
+labels:["หัว","ก้อย"],
+datasets:[{
+data:[0,0],
+backgroundColor:["#ff6b6b","#ffd6d6"]
+}]
+},
+
+options:{
+responsive:true,
+maintainAspectRatio:false,
+plugins:{
+datalabels:{
+color:"#fff",
+font:{weight:"bold",size:18},
+formatter:(v,ctx)=>{
+let total=ctx.chart.data.datasets[0].data.reduce((a,b)=>a+b,0)
+if(total===0)return"0%"
+return Math.round(v/total*100)+"%"
+}
+}
+}
+
+}
+
+})
+
+function update(){
+
+document.getElementById("h").textContent=heads
+document.getElementById("t").textContent=tails
+
+chart.data.datasets[0].data=[heads,tails]
+
+chart.update()
+
 }
 
 /* TOSS */
-function toss() {
-    playSound(spinSound); // เล่นเสียงหมุนทันทีที่กดปุ่ม
 
-    let r = Math.random() < 0.5 ? "หัว" : "ก้อย";
-    coin.style.transform = "rotateY(1800deg)";
+function toss(){
 
-    setTimeout(() => {
-        coin.style.transform = "rotateY(0deg)";
-        if (r === "หัว") {
-            coin.innerHTML = "🦁";
-            heads++;
-        } else {
-            coin.innerHTML = "🌿";
-            tails++;
-        }
-        update();
-        playSound(winSound); // เล่นเสียงเมื่อเหรียญหยุด
-        show("ผลลัพธ์: " + r);
-        confetti();
-    }, 1200);
+playSpin()
+
+let r=Math.random()<0.5?"หัว":"ก้อย"
+
+coin.style.transform="rotateY(1800deg)"
+
+setTimeout(()=>{
+
+coin.style.transform="rotateY(0deg)"
+
+if(r==="หัว"){
+coin.innerHTML="🦁"
+heads++
+}else{
+coin.innerHTML="🌿"
+tails++
+}
+
+update()
+
+playWin()
+
+show("ผลที่ได้: "+r)
+
+confetti()
+
+},1200)
+
 }
 
 /* MULTI */
-function multi(n) {
-    let h = 0;
-    let t = 0;
-    for (let i = 0; i < n; i++) {
-        Math.random() < 0.5 ? h++ : t++;
-    }
-    heads += h;
-    tails += t;
-    update();
-    playSound(winSound); // เล่นเสียงยืนยันการสุ่มจำนวนมาก
-    show("สุ่ม " + n + " ครั้ง<br>หัว " + h + " | ก้อย " + t);
-    confetti();
+
+function multi(n){
+
+let h=0
+let t=0
+
+for(let i=0;i<n;i++){
+Math.random()<0.5?h++:t++
+}
+
+heads+=h
+tails+=t
+
+update()
+
+playWin()
+
+show("โยน "+n+" ครั้ง<br>หัว "+h+" | ก้อย "+t)
+
+confetti()
+
 }
 
 /* CONFETTI */
-function confetti() {
-    for (let i = 0; i < 60; i++) {
-        let c = document.createElement("div");
-        c.className = "confetti";
-        c.style.left = Math.random() * 100 + "vw";
-        c.style.background = ["red", "yellow", "blue", "green"][Math.floor(Math.random() * 4)];
-        c.style.animationDuration = (2 + Math.random() * 2) + "s";
-        document.body.appendChild(c);
-        setTimeout(() => c.remove(), 4000);
-    }
+
+function confetti(){
+
+for(let i=0;i<60;i++){
+
+let c=document.createElement("div")
+
+c.className="confetti"
+
+c.style.left=Math.random()*100+"vw"
+
+c.style.background=["red","yellow","blue","green"][Math.floor(Math.random()*4)]
+
+c.style.animationDuration=(2+Math.random()*2)+"s"
+
+document.body.appendChild(c)
+
+setTimeout(()=>c.remove(),4000)
+
+}
+
 }
 
 /* FLOAT BALL */
-setInterval(() => {
-    let b = document.createElement("div");
-    b.className = "ball";
-    b.style.left = Math.random() * 100 + "vw";
-    b.style.background = ["#ff6b6b", "#ffd166", "#06d6a0", "#118ab2"][Math.floor(Math.random() * 4)];
-    b.style.animationDuration = (5 + Math.random() * 4) + "s";
-    document.body.appendChild(b);
-    setTimeout(() => b.remove(), 9000);
-}, 800);
+
+setInterval(()=>{
+
+let b=document.createElement("div")
+
+b.className="ball"
+
+b.style.left=Math.random()*100+"vw"
+
+b.style.background=["#ff6b6b","#ffd166","#06d6a0","#118ab2"][Math.floor(Math.random()*4)]
+
+b.style.animationDuration=(5+Math.random()*4)+"s"
+
+document.body.appendChild(b)
+
+setTimeout(()=>b.remove(),9000)
+
+},800)
 
 /* POPUP */
-function show(t) {
-    document.getElementById("result").innerHTML = t;
-    document.getElementById("popup").style.display = "flex";
+
+function show(t){
+document.getElementById("result").innerHTML=t
+document.getElementById("popup").style.display="flex"
 }
-function closePop() {
-    document.getElementById("popup").style.display = "none";
+
+function closePop(){
+document.getElementById("popup").style.display="none"
 }
-function reset() {
-    heads = 0;
-    tails = 0;
-    update();
+
+function reset(){
+heads=0
+tails=0
+update()
 }
+
 </script>
+
 </body>
 </html>
