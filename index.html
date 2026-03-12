@@ -5,24 +5,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Card Probability Lab</title>
+<title>ห้องทดลองความน่าจะเป็นจากการสุ่มไพ่</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 
 body{
-font-family:Prompt;
-background:#f1f5f9;
+font-family:'Prompt',sans-serif;
+background:linear-gradient(135deg,#c7d2fe,#e0f2fe);
 margin:0;
 padding:20px;
 text-align:center;
-}
-
-h1{
-color:#1e293b;
 }
 
 .container{
@@ -30,45 +26,49 @@ max-width:1100px;
 margin:auto;
 }
 
+h1{
+color:#1e293b;
+}
+
 .card{
-font-size:80px;
+font-size:90px;
 margin:20px;
-height:120px;
 }
 
 button{
-background:#3b82f6;
-border:none;
-padding:12px 20px;
-border-radius:10px;
+background:#6366f1;
 color:white;
-margin:5px;
+border:none;
+padding:12px 18px;
+margin:6px;
+border-radius:10px;
+font-size:16px;
 cursor:pointer;
 }
 
 button:hover{
-background:#2563eb;
+background:#4f46e5;
 }
 
 .stats{
 display:grid;
 grid-template-columns:repeat(4,1fr);
-gap:10px;
+gap:12px;
 margin-top:20px;
 }
 
 .stat{
 background:white;
 padding:15px;
-border-radius:10px;
-box-shadow:0 2px 6px rgba(0,0,0,0.1);
+border-radius:12px;
+box-shadow:0 3px 8px rgba(0,0,0,0.1);
 }
 
 .charts{
 display:grid;
 grid-template-columns:1fr 1fr;
 gap:20px;
-margin-top:40px;
+margin-top:30px;
 }
 
 .knowledge{
@@ -76,10 +76,14 @@ margin-top:40px;
 text-align:left;
 }
 
+.knowledge h2{
+text-align:center;
+}
+
 .knowledge div{
 background:white;
-padding:15px;
-margin-bottom:10px;
+padding:12px;
+margin:8px 0;
 border-radius:10px;
 }
 
@@ -87,11 +91,12 @@ border-radius:10px;
 position:fixed;
 top:20px;
 right:20px;
-background:#10b981;
+background:#22c55e;
 color:white;
 padding:15px;
 border-radius:10px;
 display:none;
+font-size:18px;
 }
 
 </style>
@@ -101,27 +106,32 @@ display:none;
 
 <div class="container">
 
-<h1>🃏 Card Probability Lab</h1>
-<p>ทดลองสุ่มไพ่และวิเคราะห์ความน่าจะเป็น</p>
+<h1>🃏 ห้องทดลองความน่าจะเป็น (การสุ่มไพ่)</h1>
+
+<p>ทดลองสุ่มไพ่จากสำรับ 52 ใบ เพื่อศึกษาความน่าจะเป็น</p>
 
 <div class="card" id="card">?</div>
 
-<button onclick="drawCard()">Draw Card</button>
-<button onclick="simulate(10)">Sim 10</button>
-<button onclick="simulate(100)">Sim 100</button>
-<button onclick="simulate(1000)">Sim 1000</button>
-<button onclick="resetStats()">Reset</button>
+<div>
 
-<div class="stats">
-
-<div class="stat">♥ Hearts <p id="hearts">0</p></div>
-<div class="stat">♦ Diamonds <p id="diamonds">0</p></div>
-<div class="stat">♣ Clubs <p id="clubs">0</p></div>
-<div class="stat">♠ Spades <p id="spades">0</p></div>
+<button onclick="drawCard()">สุ่มไพ่ 1 ใบ</button>
+<button onclick="simulate(10)">จำลอง 10 ครั้ง</button>
+<button onclick="simulate(100)">จำลอง 100 ครั้ง</button>
+<button onclick="simulate(1000)">จำลอง 1000 ครั้ง</button>
+<button onclick="resetStats()">รีเซ็ต</button>
 
 </div>
 
-<p>Total Draws: <span id="total">0</span></p>
+<div class="stats">
+
+<div class="stat">♥ โพแดง<br><span id="hearts">0</span></div>
+<div class="stat">♦ ข้าวหลามตัด<br><span id="diamonds">0</span></div>
+<div class="stat">♣ ดอกจิก<br><span id="clubs">0</span></div>
+<div class="stat">♠ โพดำ<br><span id="spades">0</span></div>
+
+</div>
+
+<p>จำนวนการสุ่มทั้งหมด: <span id="total">0</span></p>
 
 <div class="charts">
 
@@ -132,20 +142,20 @@ display:none;
 
 <div class="knowledge">
 
-<h2>📚 ความรู้เกี่ยวกับความน่าจะเป็น</h2>
+<h2>📚 ความรู้เรื่องความน่าจะเป็น</h2>
 
-<div>1️⃣ ไพ่ 1 สำรับมี 52 ใบ</div>
-<div>2️⃣ แต่ละดอกมี 13 ใบ</div>
+<div>1️⃣ ไพ่หนึ่งสำรับมีทั้งหมด 52 ใบ</div>
+<div>2️⃣ ไพ่แต่ละดอกมี 13 ใบ</div>
 <div>3️⃣ โอกาสได้ดอกใดดอกหนึ่ง = 25%</div>
-<div>4️⃣ โอกาสได้ Ace = 4/52</div>
-<div>5️⃣ ไพ่แดงมี 26 ใบ</div>
-<div>6️⃣ ไพ่ดำมี 26 ใบ</div>
-<div>7️⃣ การสุ่มหลายครั้งเรียกว่า Monte Carlo Simulation</div>
-<div>8️⃣ เมื่อทดลองมากขึ้น ผลจะเข้าใกล้ค่าทฤษฎี</div>
-<div>9️⃣ โอกาสได้ไพ่ 2 ใบไม่ซ้ำ = 51/52</div>
-<div>🔟 การเลือกไพ่ 5 ใบมี 2,598,960 วิธี</div>
-<div>11️⃣ ไพ่ดอกเดียวกันมีโอกาส 1/4</div>
-<div>12️⃣ ความน่าจะเป็นใช้ใน AI และการเงิน</div>
+<div>4️⃣ โอกาสได้ไพ่ A = 4 / 52</div>
+<div>5️⃣ ไพ่สีแดงมี 26 ใบ</div>
+<div>6️⃣ ไพ่สีดำมี 26 ใบ</div>
+<div>7️⃣ การสุ่มหลายครั้งเรียกว่า การทดลองแบบสุ่ม</div>
+<div>8️⃣ ยิ่งทดลองมาก ผลจะยิ่งใกล้ค่าทางทฤษฎี</div>
+<div>9️⃣ ไพ่ 2 ใบไม่ซ้ำกันมีโอกาส 51 / 52</div>
+<div>🔟 การเลือกไพ่ 5 ใบจาก 52 ใบ มี 2,598,960 วิธี</div>
+<div>11️⃣ โอกาสได้ดอกเดียวกัน = 1 / 4</div>
+<div>12️⃣ ความน่าจะเป็นถูกใช้ใน AI การเงิน และสถิติ</div>
 
 </div>
 
@@ -186,9 +196,7 @@ function simulate(n){
 for(let i=0;i<n;i++){
 
 let suit=suits[Math.floor(Math.random()*4)]
-let value=values[Math.floor(Math.random()*13]
-
-)
+let value=values[Math.floor(Math.random()*13)]
 
 stats[suit]++
 valueStats[value]++
@@ -203,7 +211,8 @@ updateStats()
 function showPopup(card){
 
 let popup=document.getElementById("popup")
-popup.innerHTML="You drew "+card
+
+popup.innerHTML="สุ่มได้ไพ่ "+card
 popup.style.display="block"
 
 setTimeout(()=>popup.style.display="none",1500)
@@ -216,6 +225,7 @@ document.getElementById("hearts").innerText=stats["♥"]
 document.getElementById("diamonds").innerText=stats["♦"]
 document.getElementById("clubs").innerText=stats["♣"]
 document.getElementById("spades").innerText=stats["♠"]
+
 document.getElementById("total").innerText=total
 
 updateCharts()
@@ -225,8 +235,11 @@ updateCharts()
 function resetStats(){
 
 stats={"♥":0,"♦":0,"♣":0,"♠":0}
+
 values.forEach(v=>valueStats[v]=0)
+
 total=0
+
 document.getElementById("card").innerHTML="?"
 
 updateStats()
@@ -236,10 +249,8 @@ updateStats()
 let pieChart=new Chart(document.getElementById("pieChart"),{
 type:"pie",
 data:{
-labels:["Hearts","Diamonds","Clubs","Spades"],
-datasets:[{
-data:[0,0,0,0]
-}]
+labels:["โพแดง","ข้าวหลามตัด","ดอกจิก","โพดำ"],
+datasets:[{data:[0,0,0,0]}]
 }
 })
 
@@ -247,10 +258,7 @@ let barChart=new Chart(document.getElementById("barChart"),{
 type:"bar",
 data:{
 labels:values,
-datasets:[{
-label:"Card Values",
-data:Array(13).fill(0)
-}]
+datasets:[{label:"จำนวนไพ่แต่ละค่า",data:Array(13).fill(0)}]
 }
 })
 
