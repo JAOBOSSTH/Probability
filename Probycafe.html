@@ -3,9 +3,9 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-<title>Probability Cafe</title>
+<title>Cafe Probability Lab</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
@@ -21,35 +21,30 @@ font-family:'Prompt',sans-serif;
 }
 
 body{
-background:linear-gradient(180deg,#f6f7fb,#eef1f8);
+background:#F7F3EE;
 min-height:100vh;
-display:flex;
-flex-direction:column;
 }
 
 header{
-background:linear-gradient(135deg,#8B5E3C,#C0895B,#E6B17E);
+background:linear-gradient(135deg,#3A2E2A,#6b4f3a);
 color:white;
 text-align:center;
-padding:20px;
+padding:24px;
 }
 
-.title{
-font-size:26px;
-font-weight:700;
+header h1{
+font-size:28px;
 }
 
-.subtitle{
+header p{
 font-size:13px;
 opacity:.9;
 }
 
 main{
-flex:1;
 max-width:1100px;
 margin:auto;
-padding:16px;
-width:100%;
+padding:18px;
 }
 
 .grid{
@@ -65,63 +60,39 @@ gap:16px;
 .card{
 background:white;
 border-radius:18px;
-padding:16px;
-box-shadow:0 10px 25px rgba(0,0,0,.08);
+padding:18px;
+box-shadow:0 10px 30px rgba(0,0,0,.08);
 }
 
 button{
 border:none;
-padding:10px 16px;
-border-radius:10px;
-cursor:pointer;
-background:#C0895B;
+padding:12px 18px;
+border-radius:12px;
+background:#C89F7B;
 color:white;
-font-size:14px;
+font-weight:500;
+cursor:pointer;
 transition:.2s;
 }
 
 button:hover{
-transform:translateY(-2px);
+transform:translateY(-3px);
 }
 
 .result{
-margin-top:14px;
-font-size:18px;
+margin-top:16px;
+font-size:20px;
 font-weight:600;
 text-align:center;
+color:#3A2E2A;
 }
 
-.menu{
-font-size:22px;
-color:#C0895B;
-margin-top:6px;
-}
-
-.stats{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:10px;
-margin-bottom:10px;
-}
-
-.stat{
-background:#fafafa;
-padding:10px;
-border-radius:12px;
-text-align:center;
-}
-
-.fact{
-background:#fff7e6;
-border-left:4px solid #C0895B;
+.insight{
+margin-top:10px;
+background:#fff6e9;
 padding:10px;
 border-radius:10px;
-margin-bottom:10px;
 font-size:13px;
-}
-
-canvas{
-max-height:250px;
 }
 
 </style>
@@ -131,8 +102,8 @@ max-height:250px;
 
 <header>
 
-<div class="title">☕ Probability Cafe</div>
-<div class="subtitle">เครื่องสุ่มคูปองเครื่องดื่ม & ทดลองความน่าจะเป็น</div>
+<h1>☕ Cafe Probability Lab</h1>
+<p>ทดลองความน่าจะเป็นผ่านการสุ่มเมนูเครื่องดื่ม</p>
 
 </header>
 
@@ -140,56 +111,27 @@ max-height:250px;
 
 <div class="grid">
 
-<!-- RANDOM MACHINE -->
-
 <div class="card">
 
-<h3>🎟️ เครื่องสุ่มคูปอง</h3>
+<h3>🎟 Lucky Coupon Machine</h3>
 
 <br>
 
-<select id="mode">
-
-<option value="equal">สุ่มโอกาสเท่ากัน</option>
-<option value="weighted">สุ่มโอกาสไม่เท่ากัน</option>
-<option value="norepeat">สุ่มไม่ซ้ำ</option>
-
-</select>
-
-<br><br>
-
-<button onclick="draw()">สุ่มคูปอง</button>
+<button onclick="draw()">สุ่มเครื่องดื่ม</button>
 
 <div class="result" id="result">
-กดปุ่มเพื่อสุ่ม
+กดเพื่อเริ่มสุ่ม
+</div>
+
+<div class="insight" id="insight">
+ระบบสุ่มนี้ใช้หลักความน่าจะเป็นแบบโอกาสเท่ากัน
 </div>
 
 </div>
-
-<!-- STATISTICS -->
 
 <div class="card">
 
-<h3>📊 สถิติการสุ่ม</h3>
-
-<div class="stats">
-
-<div class="stat">
-<div>สุ่มทั้งหมด</div>
-<b id="total">0</b>
-</div>
-
-<div class="stat">
-<div>เมนูที่ได้บ่อย</div>
-<b id="popular">-</b>
-</div>
-
-<div class="stat">
-<div>เมนูที่ได้น้อย</div>
-<b id="rare">-</b>
-</div>
-
-</div>
+<h3>📊 Statistics</h3>
 
 <canvas id="chart"></canvas>
 
@@ -197,180 +139,56 @@ max-height:250px;
 
 </div>
 
-<br>
-
-<div class="card">
-
-<h3>🧠 เกล็ดความรู้จากการสุ่ม</h3>
-
-<div id="facts"></div>
-
-</div>
-
 </main>
 
 <script>
 
-const menus=[
-"Americano",
-"Espresso",
-"Latte",
-"Cappuccino",
-"Mocha",
-"Fresh Milk",
-"Cocoa",
-"Dark Cocoa",
-"Chocolate Milk",
-"Thai Tea",
-"Green Tea",
-"Matcha Latte",
-"Lemon Tea",
-"Strawberry Soda",
-"Blue Hawaii Soda",
-"Lime Soda",
-"Honey Lemon",
-"Peach Tea",
-"Caramel Latte",
-"Vanilla Milk"
+const drinks=[
+"Americano","Espresso","Latte","Cappuccino","Mocha",
+"Caramel Latte","Thai Tea","Green Tea","Matcha Latte",
+"Lemon Tea","Peach Tea","Fresh Milk","Cocoa","Dark Cocoa",
+"Chocolate Milk","Vanilla Milk","Strawberry Soda",
+"Blue Hawaii Soda","Lime Soda","Honey Lemon"
 ]
 
-let history=[]
-let used=[]
+let count={}
 
-const facts=[
+drinks.forEach(d=>count[d]=0)
 
-"ถ้าสุ่มเครื่องดื่ม 20 เมนูแบบโอกาสเท่ากัน ความน่าจะเป็นที่จะได้เมนูใดเมนูหนึ่งคือ 1/20 หรือ 5%",
-
-"ถ้าสุ่ม 2 ครั้งติดกันโดยไม่สนใจผลก่อนหน้า เหตุการณ์ทั้งสองถือว่าเป็นเหตุการณ์อิสระ",
-
-"ถ้าระบบสุ่มแบบไม่ซ้ำ จำนวนผลลัพธ์จะลดลงเรื่อยๆ เช่น จาก 20 เหลือ 19 เหลือ 18",
-
-"การสุ่มจำนวนมาก เช่น 100 หรือ 1000 ครั้ง ผลลัพธ์จะเริ่มเข้าใกล้เปอร์เซ็นต์จริงของความน่าจะเป็น",
-
-"ถ้ามีเมนูบางชนิดโอกาสมากกว่า เราเรียกการแจกแจงแบบนี้ว่า Probability Distribution",
-
-"ถ้าสุ่มเมนู 3 แก้วจาก 20 แบบไม่ซ้ำ จำนวนวิธีที่เป็นไปได้จะมากถึง P(20,3)"
-
-]
-
-let counts={}
-menus.forEach(m=>counts[m]=0)
-
-let chart=null
+let chart
 
 function draw(){
 
-let mode=document.getElementById("mode").value
-let pick
+let d=drinks[Math.floor(Math.random()*drinks.length)]
 
-if(mode==="equal"){
+count[d]++
 
-pick=menus[Math.floor(Math.random()*menus.length)]
+document.getElementById("result").innerHTML="🎉 "+d
 
-}
-
-if(mode==="weighted"){
-
-let weights=[
-10,5,10,8,7,
-6,8,6,6,
-10,7,6,5,
-4,4,4,
-4,4,6,4
-]
-
-let total=weights.reduce((a,b)=>a+b)
-
-let r=Math.random()*total
-let sum=0
-
-for(let i=0;i<menus.length;i++){
-
-sum+=weights[i]
-
-if(r<=sum){
-pick=menus[i]
-break
-}
+updateChart()
 
 }
 
-}
-
-if(mode==="norepeat"){
-
-if(used.length===menus.length) used=[]
-
-let remain=menus.filter(m=>!used.includes(m))
-
-pick=remain[Math.floor(Math.random()*remain.length)]
-
-used.push(pick)
-
-}
-
-counts[pick]++
-history.push(pick)
-
-document.getElementById("result").innerHTML=
-"🎉 คุณได้คูปอง<br><div class='menu'>"+pick+"</div>"
-
-updateStats()
-showFact()
-
-}
-
-function updateStats(){
-
-document.getElementById("total").innerText=history.length
-
-let entries=Object.entries(counts)
-
-entries.sort((a,b)=>b[1]-a[1])
-
-document.getElementById("popular").innerText=entries[0][0]
-
-entries.sort((a,b)=>a[1]-b[1])
-
-document.getElementById("rare").innerText=entries[0][0]
-
-renderChart()
-
-}
-
-function renderChart(){
+function updateChart(){
 
 let ctx=document.getElementById("chart")
 
 if(chart) chart.destroy()
 
 chart=new Chart(ctx,{
-
 type:"bar",
-
 data:{
-labels:menus,
+labels:drinks,
 datasets:[{
-data:menus.map(m=>counts[m])
+data:drinks.map(d=>count[d])
 }]
 },
-
 options:{
 plugins:{
 legend:{display:false}
 }
 }
-
 })
-
-}
-
-function showFact(){
-
-let f=facts[Math.floor(Math.random()*facts.length)]
-
-document.getElementById("facts").innerHTML=
-"<div class='fact'>"+f+"</div>"
 
 }
 
