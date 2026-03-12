@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Probability Cafe</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+font-family:'Prompt',sans-serif;
+}
+
+body{
+background:linear-gradient(180deg,#f6f7fb,#eef1f8);
+min-height:100vh;
+display:flex;
+flex-direction:column;
+}
+
+header{
+background:linear-gradient(135deg,#8B5E3C,#C0895B,#E6B17E);
+color:white;
+text-align:center;
+padding:20px;
+}
+
+.title{
+font-size:26px;
+font-weight:700;
+}
+
+.subtitle{
+font-size:13px;
+opacity:.9;
+}
+
+main{
+flex:1;
+max-width:1100px;
+margin:auto;
+padding:16px;
+width:100%;
+}
+
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:16px;
+}
+
+@media(max-width:900px){
+.grid{grid-template-columns:1fr;}
+}
+
+.card{
+background:white;
+border-radius:18px;
+padding:16px;
+box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+button{
+border:none;
+padding:10px 16px;
+border-radius:10px;
+cursor:pointer;
+background:#C0895B;
+color:white;
+font-size:14px;
+transition:.2s;
+}
+
+button:hover{
+transform:translateY(-2px);
+}
+
+.result{
+margin-top:14px;
+font-size:18px;
+font-weight:600;
+text-align:center;
+}
+
+.menu{
+font-size:22px;
+color:#C0895B;
+margin-top:6px;
+}
+
+.stats{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:10px;
+margin-bottom:10px;
+}
+
+.stat{
+background:#fafafa;
+padding:10px;
+border-radius:12px;
+text-align:center;
+}
+
+.fact{
+background:#fff7e6;
+border-left:4px solid #C0895B;
+padding:10px;
+border-radius:10px;
+margin-bottom:10px;
+font-size:13px;
+}
+
+canvas{
+max-height:250px;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+
+<div class="title">☕ Probability Cafe</div>
+<div class="subtitle">เครื่องสุ่มคูปองเครื่องดื่ม & ทดลองความน่าจะเป็น</div>
+
+</header>
+
+<main>
+
+<div class="grid">
+
+<!-- RANDOM MACHINE -->
+
+<div class="card">
+
+<h3>🎟️ เครื่องสุ่มคูปอง</h3>
+
+<br>
+
+<select id="mode">
+
+<option value="equal">สุ่มโอกาสเท่ากัน</option>
+<option value="weighted">สุ่มโอกาสไม่เท่ากัน</option>
+<option value="norepeat">สุ่มไม่ซ้ำ</option>
+
+</select>
+
+<br><br>
+
+<button onclick="draw()">สุ่มคูปอง</button>
+
+<div class="result" id="result">
+กดปุ่มเพื่อสุ่ม
+</div>
+
+</div>
+
+<!-- STATISTICS -->
+
+<div class="card">
+
+<h3>📊 สถิติการสุ่ม</h3>
+
+<div class="stats">
+
+<div class="stat">
+<div>สุ่มทั้งหมด</div>
+<b id="total">0</b>
+</div>
+
+<div class="stat">
+<div>เมนูที่ได้บ่อย</div>
+<b id="popular">-</b>
+</div>
+
+<div class="stat">
+<div>เมนูที่ได้น้อย</div>
+<b id="rare">-</b>
+</div>
+
+</div>
+
+<canvas id="chart"></canvas>
+
+</div>
+
+</div>
+
+<br>
+
+<div class="card">
+
+<h3>🧠 เกล็ดความรู้จากการสุ่ม</h3>
+
+<div id="facts"></div>
+
+</div>
+
+</main>
+
+<script>
+
+const menus=[
+"Americano",
+"Espresso",
+"Latte",
+"Cappuccino",
+"Mocha",
+"Fresh Milk",
+"Cocoa",
+"Dark Cocoa",
+"Chocolate Milk",
+"Thai Tea",
+"Green Tea",
+"Matcha Latte",
+"Lemon Tea",
+"Strawberry Soda",
+"Blue Hawaii Soda",
+"Lime Soda",
+"Honey Lemon",
+"Peach Tea",
+"Caramel Latte",
+"Vanilla Milk"
+]
+
+let history=[]
+let used=[]
+
+const facts=[
+
+"ถ้าสุ่มเครื่องดื่ม 20 เมนูแบบโอกาสเท่ากัน ความน่าจะเป็นที่จะได้เมนูใดเมนูหนึ่งคือ 1/20 หรือ 5%",
+
+"ถ้าสุ่ม 2 ครั้งติดกันโดยไม่สนใจผลก่อนหน้า เหตุการณ์ทั้งสองถือว่าเป็นเหตุการณ์อิสระ",
+
+"ถ้าระบบสุ่มแบบไม่ซ้ำ จำนวนผลลัพธ์จะลดลงเรื่อยๆ เช่น จาก 20 เหลือ 19 เหลือ 18",
+
+"การสุ่มจำนวนมาก เช่น 100 หรือ 1000 ครั้ง ผลลัพธ์จะเริ่มเข้าใกล้เปอร์เซ็นต์จริงของความน่าจะเป็น",
+
+"ถ้ามีเมนูบางชนิดโอกาสมากกว่า เราเรียกการแจกแจงแบบนี้ว่า Probability Distribution",
+
+"ถ้าสุ่มเมนู 3 แก้วจาก 20 แบบไม่ซ้ำ จำนวนวิธีที่เป็นไปได้จะมากถึง P(20,3)"
+
+]
+
+let counts={}
+menus.forEach(m=>counts[m]=0)
+
+let chart=null
+
+function draw(){
+
+let mode=document.getElementById("mode").value
+let pick
+
+if(mode==="equal"){
+
+pick=menus[Math.floor(Math.random()*menus.length)]
+
+}
+
+if(mode==="weighted"){
+
+let weights=[
+10,5,10,8,7,
+6,8,6,6,
+10,7,6,5,
+4,4,4,
+4,4,6,4
+]
+
+let total=weights.reduce((a,b)=>a+b)
+
+let r=Math.random()*total
+let sum=0
+
+for(let i=0;i<menus.length;i++){
+
+sum+=weights[i]
+
+if(r<=sum){
+pick=menus[i]
+break
+}
+
+}
+
+}
+
+if(mode==="norepeat"){
+
+if(used.length===menus.length) used=[]
+
+let remain=menus.filter(m=>!used.includes(m))
+
+pick=remain[Math.floor(Math.random()*remain.length)]
+
+used.push(pick)
+
+}
+
+counts[pick]++
+history.push(pick)
+
+document.getElementById("result").innerHTML=
+"🎉 คุณได้คูปอง<br><div class='menu'>"+pick+"</div>"
+
+updateStats()
+showFact()
+
+}
+
+function updateStats(){
+
+document.getElementById("total").innerText=history.length
+
+let entries=Object.entries(counts)
+
+entries.sort((a,b)=>b[1]-a[1])
+
+document.getElementById("popular").innerText=entries[0][0]
+
+entries.sort((a,b)=>a[1]-b[1])
+
+document.getElementById("rare").innerText=entries[0][0]
+
+renderChart()
+
+}
+
+function renderChart(){
+
+let ctx=document.getElementById("chart")
+
+if(chart) chart.destroy()
+
+chart=new Chart(ctx,{
+
+type:"bar",
+
+data:{
+labels:menus,
+datasets:[{
+data:menus.map(m=>counts[m])
+}]
+},
+
+options:{
+plugins:{
+legend:{display:false}
+}
+}
+
+})
+
+}
+
+function showFact(){
+
+let f=facts[Math.floor(Math.random()*facts.length)]
+
+document.getElementById("facts").innerHTML=
+"<div class='fact'>"+f+"</div>"
+
+}
+
+</script>
+
+</body>
+</html>
